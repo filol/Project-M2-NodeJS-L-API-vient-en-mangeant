@@ -4,7 +4,7 @@
 
 ## Analyser
 
-BASHAR est une application web qui a pour but d’améliorer son niveau de langue (plusieurs langues seront disponibles). L’idée est de faire écouter à l’utilisateur des mots et de lui demander ensuite de les écrire. 
+LIMBA est une application web qui a pour but d’améliorer son niveau de langue (plusieurs langues seront disponibles). L’idée est de faire écouter à l’utilisateur des mots et de lui demander ensuite de les écrire. 
 
 
 
