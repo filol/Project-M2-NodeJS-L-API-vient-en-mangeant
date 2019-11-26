@@ -1,7 +1,0 @@
-// HTTP requests for testing
-@host= localhost:3001
-
-###
-GET http://{{host}}/users/signup
-
-###
