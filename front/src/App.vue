@@ -1,60 +1,115 @@
 <template>
-  <v-app>
-    <v-app-bar
+  <v-app
+    dark
+    v-touch="{
+      left: () => drawer = false,
+      right: () => drawer = true
+    }"
+  >
+    <!-- NAVIGATION DRAWER -->
+    <v-navigation-drawer
       app
-      color="primary"
-      dark
+      temporary
+      v-model="drawer"
+      :color='primaryColor'
     >
-      <div class="d-flex align-center">
+      <loginSignUpAccountBtn v-bind:drawer="drawer"/>
+      <v-list>
+        <v-list-item
+          v-for='item in linkList'
+          :key='item.index'
+          :to=item.to
+        >
+          <v-list-item-content>
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <!-- HEADER -->
+    <v-app-bar
+      fixed
+      app
+      :color='primaryColor'
+    >
+      <template v-slot:img>
         <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+          v-bind="props"
+          gradient="to top right, rgba(55,236,186,.7), rgba(25,32,72,.7)"
+        ></v-img>
+      </template>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+      <v-app-bar-nav-icon
+        class="hidden-md-and-up"
+        @click.stop="drawer = !drawer">
+      </v-app-bar-nav-icon>
 
-      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-btn nuxt text @click="goHome" class="headline" depressed>{{ title }}</v-btn>
+      </v-toolbar-items>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <v-spacer />
+
+      <v-toolbar-items class="hidden-sm-and-down">
+        <v-btn v-for="item in linkList" :key='item.index' nuxt text :to=item.to>
+          {{ item.name }}
+        </v-btn>
+      </v-toolbar-items>
+
+      <loginSignUpAccountBtn v-bind:drawer="drawer" class="hidden-sm-and-down"/>
+
     </v-app-bar>
 
+    <!-- MAIN CONTENT -->
     <v-content>
-      <HelloWorld/>
+      <v-container fluid>
+        <HelloWorld/>
+      </v-container>
     </v-content>
+
+    <!-- FOOTER -->
+    <v-footer
+      absolute
+      class="font-weight-medium"
+      :color='primaryColor'
+    >
+      <v-col
+        class="text-center"
+        cols="12"
+      >
+        {{ new Date().getFullYear() }} — <strong>{{ teamName }}</strong>
+      </v-col>
+    </v-footer>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import HelloWorld from './components/HelloWorld'
+import loginSignUpAccountBtn from './components/loginSignUpAccountBtn'
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    loginSignUpAccountBtn,
+    HelloWorld
   },
-
+  methods: {
+    goHome () {
+      this.$router.push({ path: '/' })
+    }
+  },
   data: () => ({
-    //
-  }),
-};
+    drawer: false,
+    primaryColor: '#455A64',
+    title: 'Limbia',
+    teamName: 'L\'API VIENT EN MANGEANT',
+    linkList: [
+      { name: 'Home', to: '/' },
+      { name: 'Test', to: '/test' },
+      { name: 'test n2', to: 'test' }
+    ]
+  })
+}
 </script>
