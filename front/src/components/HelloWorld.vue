@@ -12,7 +12,11 @@
           height="200"
         ></v-img>
       </v-flex>
-
+      <p>{{ this.$vuetify.breakpoint.xs }} </p>
+      <p>{{ this.$vuetify.breakpoint.sm }} </p>
+      <p>{{ this.$vuetify.breakpoint.md }} </p>
+      <p>{{ this.$vuetify.breakpoint.lg }} </p>
+      <p>{{ this.$vuetify.breakpoint.xl }} </p>
       <v-flex mb-4>
         <h1 class="display-2 font-weight-bold mb-3">
           Welcome to Vuetify
