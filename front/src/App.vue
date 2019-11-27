@@ -64,6 +64,7 @@
     <!-- MAIN CONTENT -->
     <v-content>
       <v-container fluid>
+        <router-view></router-view>
         <HelloWorld/>
       </v-container>
     </v-content>
@@ -90,8 +91,10 @@ import loginSignUpAccountBtn from './components/loginSignUpAccountBtn'
 
 export default {
   name: 'App',
-
   components: {
+  },
+  data: () => ({
+    //
     loginSignUpAccountBtn,
     HelloWorld
   },
