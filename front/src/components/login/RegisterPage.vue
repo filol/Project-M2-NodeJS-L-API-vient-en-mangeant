@@ -2,7 +2,7 @@
   <v-container>
     <v-row no-gutters justify="center" align="center">
       <v-col cols=12 sm=10 md=8 lg=6>
-        <v-card hover>
+        <v-card>
           <v-card-title>
             Register
           </v-card-title>
@@ -37,15 +37,6 @@
                 shaped
               ></v-text-field>
 
-              <v-text-field
-                v-model="passwordVerification"
-                type="password"
-                label=" Same password"
-                :rules="[required]"
-                outlined
-                shaped
-              ></v-text-field>
-
               <v-btn @click="handleSubmit">
                 Validate
               </v-btn>
@@ -63,8 +54,7 @@ export default {
     return {
       username: '',
       email: '',
-      password: '',
-      passwordVerification: ''
+      password: ''
     }
   },
   methods: {
