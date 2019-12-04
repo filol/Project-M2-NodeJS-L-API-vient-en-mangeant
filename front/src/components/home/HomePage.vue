@@ -24,6 +24,7 @@ export default {
 .myDiv {
   position: relative;
   z-index: 1;
+  height: 100%;
 }
 .myDiv .bg {
   position: absolute;
@@ -36,6 +37,5 @@ export default {
     center center;
   opacity: 0.4;
   width: 100%;
-  height: 800px;
 }
 </style>
