@@ -29,16 +29,10 @@
 
     <!-- HEADER -->
     <v-app-bar
-      fixed
       app
+      fixed
       :color='primaryColor'
     >
-      <template v-slot:img>
-        <v-img
-          v-bind="props"
-          gradient="to top right, rgba(55,236,186,.7), rgba(25,32,72,.7)"
-        ></v-img>
-      </template>
 
       <v-app-bar-nav-icon
         class="hidden-md-and-up"
@@ -46,13 +40,13 @@
       </v-app-bar-nav-icon>
 
       <v-toolbar-items>
-        <v-btn nuxt text @click="goHome" class="headline" depressed>{{ title }}</v-btn>
+        <v-btn text @click="goHome" class="headline" depressed>{{ title }}</v-btn>
       </v-toolbar-items>
 
       <v-spacer />
 
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn v-for="item in linkList" :key='item.index' nuxt text :to=item.to>
+        <v-btn v-for="item in linkList" :key='item.index' text :to=item.to>
           {{ item.name }}
         </v-btn>
       </v-toolbar-items>
@@ -65,7 +59,6 @@
     <v-content>
       <v-container fluid>
         <router-view></router-view>
-        <HelloWorld/>
       </v-container>
     </v-content>
 
@@ -86,17 +79,12 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
 import loginSignUpAccountBtn from './components/loginSignUpAccountBtn'
 
 export default {
   name: 'App',
   components: {
-  },
-  data: () => ({
-    //
-    loginSignUpAccountBtn,
-    HelloWorld
+    loginSignUpAccountBtn
   },
   methods: {
     goHome () {
