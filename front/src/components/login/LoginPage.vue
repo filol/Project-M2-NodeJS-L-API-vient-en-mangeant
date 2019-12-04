@@ -1,43 +1,45 @@
 <template>
-  <v-row no-gutters justify="center" align="center">
-    <v-col cols=12 sm=10 md=8 lg=6>
-      <v-card>
-        <v-card-title>
-          Login
-        </v-card-title>
-        <v-card-text>
-          <v-form
-            ref="form"
-          >
-            <v-text-field
-              v-model="username"
-              type="text"
-              label="Username"
-              :rules="[required]"
-              outlined
-              shaped
-            ></v-text-field>
-
-            <v-text-field
-              v-model="password"
-              type="password"
-              label="Password"
-              :rules="[required]"
-              outlined
-              shaped
-            ></v-text-field>
-
-            <v-btn
-              class="mr-4"
-              @click="handleSubmit"
+  <v-container>
+    <v-row no-gutters justify="center" align="center">
+      <v-col cols=12 sm=10 md=8 lg=6>
+        <v-card>
+          <v-card-title>
+            Login
+          </v-card-title>
+          <v-card-text>
+            <v-form
+              ref="form"
             >
-              Validate
-            </v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+              <v-text-field
+                v-model="username"
+                type="text"
+                label="Username"
+                :rules="[required]"
+                outlined
+                shaped
+              ></v-text-field>
+
+              <v-text-field
+                v-model="password"
+                type="password"
+                label="Password"
+                :rules="[required]"
+                outlined
+                shaped
+              ></v-text-field>
+
+              <v-btn
+                class="mr-4"
+                @click="handleSubmit"
+              >
+                Validate
+              </v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

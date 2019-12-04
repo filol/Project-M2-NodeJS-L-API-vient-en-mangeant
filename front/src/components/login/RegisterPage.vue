@@ -1,58 +1,60 @@
 <template>
-  <v-row no-gutters justify="center" align="center">
-    <v-col cols=12 sm=10 md=8 lg=6>
-      <v-card>
-        <v-card-title>
-          Register
-        </v-card-title>
-        <v-card-text>
-          <v-form
-            ref="form"
-          >
-            <v-text-field
-              v-model="username"
-              type="text"
-              label="Username"
-              :rules="[required]"
-              outlined
-              shaped
-            ></v-text-field>
+  <v-container>
+    <v-row no-gutters justify="center" align="center">
+      <v-col cols=12 sm=10 md=8 lg=6>
+        <v-card hover>
+          <v-card-title>
+            Register
+          </v-card-title>
+          <v-card-text>
+            <v-form
+              ref="form"
+            >
+              <v-text-field
+                v-model="username"
+                type="text"
+                label="Username"
+                :rules="[required]"
+                outlined
+                shaped
+              ></v-text-field>
 
-            <v-text-field
-              v-model="email"
-              type="email"
-              label="Email"
-              :rules="[required, emailValidation]"
-              outlined
-              shaped
-            ></v-text-field>
+              <v-text-field
+                v-model="email"
+                type="email"
+                label="Email"
+                :rules="[required, emailValidation]"
+                outlined
+                shaped
+              ></v-text-field>
 
-            <v-text-field
-              v-model="password"
-              type="password"
-              label="Password"
-              :rules="[required]"
-              outlined
-              shaped
-            ></v-text-field>
+              <v-text-field
+                v-model="password"
+                type="password"
+                label="Password"
+                :rules="[required]"
+                outlined
+                shaped
+              ></v-text-field>
 
-            <v-text-field
-              v-model="passwordVerification"
-              type="password"
-              label=" Same password"
-              :rules="[required]"
-              outlined
-              shaped
-            ></v-text-field>
+              <v-text-field
+                v-model="passwordVerification"
+                type="password"
+                label=" Same password"
+                :rules="[required]"
+                outlined
+                shaped
+              ></v-text-field>
 
-            <v-btn @click="handleSubmit">
-              Validate
-            </v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+              <v-btn @click="handleSubmit">
+                Validate
+              </v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -71,7 +73,7 @@ export default {
       return pattern.test(value) || 'Adresse mail invalide'
     },
     required: value => !!value || 'Requis',
-    handleSubmit (e) {
+    handleSubmit (e) { // TODO
       this.submitted = true
       const { username, password } = this
       const { dispatch } = this.$store
