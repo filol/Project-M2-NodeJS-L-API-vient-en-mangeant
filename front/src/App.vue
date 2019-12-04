@@ -5,14 +5,17 @@
     }">
     <!-- NAVIGATION DRAWER -->
     <v-navigation-drawer app temporary v-model="drawer" :color="primaryColor">
-      <loginSignUpAccountBtn v-bind:drawer="drawer" />
-      <v-list>
+      <v-list nav>
         <v-list-item v-for="item in linkList" :key="item.index" :to="item.to">
           <v-list-item-content>
             <v-list-item-title>{{ item.name }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
+
+      <template v-slot:append>
+        <loginSignUpAccountBtn class="ma-2" v-bind:drawer="drawer" />
+      </template>
     </v-navigation-drawer>
 
     <!-- HEADER -->
