@@ -1,25 +1,13 @@
 <template>
-  <v-app
-    dark
-    v-touch="{
+  <v-app dark v-touch="{
       left: () => drawer = false,
       right: () => drawer = true
-    }"
-  >
+    }">
     <!-- NAVIGATION DRAWER -->
-    <v-navigation-drawer
-      app
-      temporary
-      v-model="drawer"
-      :color='primaryColor'
-    >
-      <loginSignUpAccountBtn v-bind:drawer="drawer"/>
+    <v-navigation-drawer app temporary v-model="drawer" :color="primaryColor">
+      <loginSignUpAccountBtn v-bind:drawer="drawer" />
       <v-list>
-        <v-list-item
-          v-for='item in linkList'
-          :key='item.index'
-          :to=item.to
-        >
+        <v-list-item v-for="item in linkList" :key="item.index" :to="item.to">
           <v-list-item-content>
             <v-list-item-title>{{ item.name }}</v-list-item-title>
           </v-list-item-content>
@@ -28,16 +16,8 @@
     </v-navigation-drawer>
 
     <!-- HEADER -->
-    <v-app-bar
-      app
-      fixed
-      :color='primaryColor'
-    >
-
-      <v-app-bar-nav-icon
-        class="hidden-md-and-up"
-        @click.stop="drawer = !drawer">
-      </v-app-bar-nav-icon>
+    <v-app-bar app fixed :color="primaryColor">
+      <v-app-bar-nav-icon class="hidden-md-and-up" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-items>
         <v-btn text @click="goHome" class="headline" depressed>{{ title }}</v-btn>
@@ -46,33 +26,22 @@
       <v-spacer />
 
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn v-for="item in linkList" :key='item.index' text :to=item.to>
-          {{ item.name }}
-        </v-btn>
+        <v-btn v-for="item in linkList" :key="item.index" text :to="item.to">{{ item.name }}</v-btn>
       </v-toolbar-items>
 
-      <loginSignUpAccountBtn v-bind:drawer="drawer" class="hidden-sm-and-down"/>
-
+      <loginSignUpAccountBtn v-bind:drawer="drawer" class="hidden-sm-and-down" />
     </v-app-bar>
 
     <!-- MAIN CONTENT -->
     <v-content>
-      <v-container fluid>
-        <router-view></router-view>
-      </v-container>
+      <router-view></router-view>
     </v-content>
 
     <!-- FOOTER -->
-    <v-footer
-      absolute
-      class="font-weight-medium"
-      :color='primaryColor'
-    >
-      <v-col
-        class="text-center"
-        cols="12"
-      >
-        {{ new Date().getFullYear() }} — <strong>{{ teamName }}</strong>
+    <v-footer absolute class="font-weight-medium" :color="primaryColor">
+      <v-col class="text-center" cols="12">
+        {{ new Date().getFullYear() }} —
+        <strong>{{ teamName }}</strong>
       </v-col>
     </v-footer>
   </v-app>
