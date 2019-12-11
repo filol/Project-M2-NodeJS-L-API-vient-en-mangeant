@@ -1,14 +1,16 @@
 <template>
   <v-container>
     <!-- invisible audio player -->
-    <audio
-      id="audioPlayback"
-      @ended="endPlaying()"
-      style="display:none;"
-      controls
-    >
-      <source id="audioSource" type="audio/mp3" src="" />
+    <audio id="audioPlayback" @ended="endPlaying()" style="display:none;" controls>
+      <source id="audioSource" type="audio/mp3" src />
     </audio>
+
+    <v-row no-gutters justify="center" align="center" class="text-center">
+      <v-col cols="12">
+        <h1>Sandbox</h1>
+        <p>A random word is chosen and you have to guess what this word is by hearing</p>
+      </v-col>
+    </v-row>
     <v-card>
       <v-row no-gutters justify="center" align="center" class="text-center">
         <v-col cols="12" class="mt-3">
@@ -21,13 +23,7 @@
       <v-row no-gutters justify="center" align="center">
         <v-col cols="12" sm="8" md="8" lg="4">
           <v-card-text>
-            <v-text-field
-              type="text"
-              v-model="word"
-              label="Your guess"
-              outlined
-              shaped
-            ></v-text-field>
+            <v-text-field type="text" v-model="word" label="Your guess" outlined shaped></v-text-field>
           </v-card-text>
         </v-col>
       </v-row>
@@ -40,9 +36,7 @@
         </v-col>
         <v-col cols="6" sm="6" md="6" lg="6">
           <div class="my-2">
-            <v-btn v-on:click="validateAnswer()" large color="primary"
-              >Validate</v-btn
-            >
+            <v-btn v-on:click="validateAnswer()" large color="primary">Validate</v-btn>
           </div>
         </v-col>
       </v-row>
