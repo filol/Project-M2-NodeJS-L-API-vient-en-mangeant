@@ -70,7 +70,9 @@ export default {
     teamName: 'L\'API VIENT EN MANGEANT',
     linkList: [
       { name: 'Home', to: '/' },
-      { name: 'Sandbox', to: '/sandbox' }
+      { name: 'Sandbox', to: '/game/sandbox' },
+      { name: 'Quizz', to: '/game/quizz' },
+      { name: '', to: '' }
     ]
   })
 }
