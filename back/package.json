@@ -1,0 +1,44 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier-standard --write *.js"
+  },
+  "lint-staged": {
+    "linters": {
+      "**/*.js": [
+        "prettier-standard",
+        "git add"
+      ],
+      "**/*.jsx": [
+        "prettier-standard",
+        "git add"
+      ]
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
+    "prettier-standard": "^16.1.0",
+    "standard": "*"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.8.1",
+    "passport": "^0.4.0"
+  },
+  "standard": {
+    "plugins": [
+      "html"
+    ],
+    "parser": "babel-eslint"
+  }
+}
