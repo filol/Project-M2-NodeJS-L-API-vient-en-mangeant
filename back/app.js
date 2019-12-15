@@ -2,6 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const passport = require('passport')
+const db = require('./services/database')
+console.log('db: ', db)
 
 app.use(bodyParser.json())
 
