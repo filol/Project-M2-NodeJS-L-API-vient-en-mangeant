@@ -3,7 +3,8 @@ const bodyParser = require('body-parser')
 const app = express()
 const passport = require('passport')
 const db = require('./services/database')
-console.log('db: ', db)
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
 
 app.use(bodyParser.json())
 
@@ -11,6 +12,18 @@ app.use(bodyParser.json())
  *  Passport : Express-compatible authentication middleware for Node.js.
  */
 app.use(passport.initialize())
+
+// use sessions for tracking logins
+app.use(
+  session({
+    secret: 'secret key a modifier',
+    resave: true,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongooseConnection: db
+    })
+  })
+)
 
 app.use('/', require('./routes/api')(passport))
 

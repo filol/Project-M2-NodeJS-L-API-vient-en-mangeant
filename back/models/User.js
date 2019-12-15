@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -20,6 +20,9 @@ const UserSchema = new mongoose.Schema({
   }
 })
 
+/**
+ * Hashing password before saving
+ */
 UserSchema.pre('save', function (next) {
   var user = this
   bcrypt.hash(user.password, 10, function (err, hash) {
@@ -29,6 +32,17 @@ UserSchema.pre('save', function (next) {
     user.password = hash
     next()
   })
+})
+
+/**
+ * Handler **must** take 3 parameters: the error that occurred, the document in question, and the `next()` function
+ */
+UserSchema.post('save', function (error, doc, next) {
+  if (error.name === 'MongoError' && error.code === 11000) {
+    next(new Error('There was a duplicate key error'))
+  } else {
+    next(error)
+  }
 })
 
 const User = mongoose.model('User', UserSchema)

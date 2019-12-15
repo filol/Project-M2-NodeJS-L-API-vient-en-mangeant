@@ -30,14 +30,16 @@
     "standard": "*"
   },
   "dependencies": {
-    "bcrypt": "^3.0.7",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "connect-mongo": "^3.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "express-validator": "^6.3.0",
     "mongoose": "^5.8.1",
     "passport": "^0.4.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.4.0"
   },
   "standard": {
     "plugins": [
