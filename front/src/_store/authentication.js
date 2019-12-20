@@ -18,12 +18,33 @@ export const authentication = {
       authService.login(username, password)
         .then(
           user => {
-            commit('loginSuccess', user)
-            router.push('/')
+            if (user === false) commit('loginFailure')
+            else {
+              commit('loginSuccess', user)
+              router.push('/')
+            }
           },
           error => {
             commit('loginFailure', error)
-            dispatch('alert/error', error, { root: true })
+            // dispatch('alert/error', error, { root: true })
+          }
+        )
+    },
+    register ({ dispatch, commit }, { username, email, password }) {
+      commit('loginRequest', { username })
+
+      authService.register(username, email, password)
+        .then(
+          user => {
+            if (user === false) commit('loginFailure')
+            else {
+              commit('loginSuccess', user)
+              router.push('/')
+            }
+          },
+          error => {
+            commit('loginFailure', error)
+            // dispatch('alert/error', error, { root: true })
           }
         )
     },

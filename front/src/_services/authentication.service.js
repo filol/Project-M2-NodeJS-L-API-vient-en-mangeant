@@ -1,6 +1,6 @@
 import { axiosAPI } from '../_helpers'
 
-export const authService = { login, logout }
+export const authService = { login, register, logout }
 
 /**
  * The login function
@@ -13,6 +13,24 @@ function login (username, password) {
     .then(response => {
       if (response.success === true) return true
       return false
+    })
+    .catch(err => {
+      console.error('err: ', err)
+      return false
+    })
+}
+
+/**
+ * The register function
+ * @param {String} username - the client username
+ * @param {String} email - the client email
+ * @param {String} password - the client password
+ */
+function register (username, email, password) {
+  return axiosAPI
+    .post('/users/register', { username: username, email: email, password: password })
+    .then(response => {
+      return true
     })
     .catch(err => {
       console.error('err: ', err)

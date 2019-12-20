@@ -78,6 +78,7 @@ authController.login = async function (req, res) {
       // Save user info in session
       req.session.userId = user._id
       req.session.username = user.username
+      res.cookie('username', user.username)
 
       res.status(200).json({ success: true })
     } else {

@@ -65,10 +65,10 @@ export default {
     required: value => !!value || 'Requis',
     handleSubmit (e) { // TODO
       this.submitted = true
-      const { username, password } = this
+      const { username, email, password } = this
       const { dispatch } = this.$store
       if (username && password) {
-        dispatch('authentication/login', { username, password })
+        dispatch('authentication/register', { username, email, password })
       }
     }
   }
