@@ -1,14 +1,9 @@
 // Import the mongoose module
 const mongoose = require('mongoose')
 
-const user = 'heroku_v5rfr8w3'
-const password = 's3m6t7jp1145n17pviesp4t0cv'
-const host = 'ds115653.mlab.com'
-const port = 15653
-const dbname = 'heroku_v5rfr8w3'
-
-// const uri = 'mongodb://heroku_v5rfr8w3:pass@host:port/dbname'
-const uri = `mongodb://${user}:${password}@${host}:${port}/${dbname}`
+const uri =
+  process.env.MONGO_URI ||
+  'mongodb://heroku_g4k6sn1l:tpj1grg07ldrlbutch7oo279gs@ds131546.mlab.com:31546/heroku_g4k6sn1l'
 
 // Set up default mongoose connection
 const mongoDB = uri
