@@ -44,6 +44,7 @@ authController.register = async function (req, res) {
       // Save user info in session
       req.session.userId = user._id
       req.session.username = user.username
+      res.cookie('username', user.username)
 
       res.status(201).json({ user: user })
     }
@@ -66,10 +67,10 @@ authController.login = async function (req, res) {
       return
     }
 
-    const email = req.body.email
+    const username = req.body.username
     const password = req.body.password
 
-    const user = await User.findOne({ email: email })
+    const user = await User.findOne({ username: username })
     if (user && bcrypt.compareSync(password, user.password)) {
       // Create token here
       // const token = jwt.sign({ sub: user.id }, config.secret)
@@ -78,9 +79,9 @@ authController.login = async function (req, res) {
       req.session.userId = user._id
       req.session.username = user.username
 
-      res.json({ user: user })
+      res.status(200).json({ success: true })
     } else {
-      res.status(404).json({ message: 'Wrong email or password' })
+      res.status(404).json({ success: false, message: 'Wrong email or password' })
     }
   } catch (err) {
     logger.error(err)
@@ -111,8 +112,7 @@ authController.validate = method => {
     }
     case 'login': {
       return [
-        check('email', 'Email missing').exists(),
-        check('email', 'Email format wrong').isEmail(),
+        check('username', 'Username missing').exists(),
         check('password', 'Password missing').exists()
       ]
     }

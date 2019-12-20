@@ -5,8 +5,10 @@ const passport = require('passport')
 const db = require('./services/database')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
+const cors = require('cors')
 
 app.use(bodyParser.json())
+app.use(cors())
 
 /**
  *  Passport : Express-compatible authentication middleware for Node.js.

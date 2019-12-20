@@ -14,7 +14,7 @@ const logger = createLogger({
     format.splat(),
     format.json()
   ),
-  defaultMeta: { service: 'Phacil' },
+  defaultMeta: { service: 'L\'api vient en mangeant' },
   transports: [
     //
     // - Write all logs error (and below) to `phacil-error.log`.

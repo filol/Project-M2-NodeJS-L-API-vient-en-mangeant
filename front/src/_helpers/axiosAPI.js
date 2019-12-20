@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const axiosAPI = axios.create({
-  baseURL: 'todo',
+  baseURL: process.env.VUE_APP_API_URL,
   headers: {
     Authorization: '',
     'Content-Type': 'application/json'

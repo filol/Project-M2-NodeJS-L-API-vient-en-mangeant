@@ -1,5 +1,4 @@
-import { fakeAxiosAPI } from '../_helpers'
-// import { axiosAPI } from '../_helpers'
+import { axiosAPI } from '../_helpers'
 
 export const authService = { login, logout }
 
@@ -9,13 +8,16 @@ export const authService = { login, logout }
  * @param {String} password - the client password
  */
 function login (username, password) {
-  return fakeAxiosAPI.post('/users/authenticate', { username: username, password: password }).then(response => {
-    console.log('response: ', response)
-    return true
-  }).catch(err => {
-    console.error('err: ', err)
-    return false
-  })
+  return axiosAPI
+    .post('/users/login', { username: username, password: password })
+    .then(response => {
+      if (response.success === true) return true
+      return false
+    })
+    .catch(err => {
+      console.error('err: ', err)
+      return false
+    })
 }
 
 /**

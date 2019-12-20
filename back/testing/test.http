@@ -1,5 +1,5 @@
 // HTTP requests for testing
-@url= http://localhost:3001
+@url=http://localhost:3001
 
 ###
 // Register a user
@@ -18,7 +18,7 @@ POST {{url}}/users/login
 Content-Type: application/json
 
 {
-    "email": "test@test.com",
+    "username": "test",
     "password": "test"
 }
 
