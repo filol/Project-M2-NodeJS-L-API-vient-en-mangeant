@@ -38,6 +38,8 @@
     <!-- MAIN CONTENT -->
     <v-content>
       <router-view></router-view>
+        <!-- ALERT POPUP -->
+        <Popup/>
     </v-content>
 
     <!-- FOOTER -->
@@ -52,11 +54,13 @@
 
 <script>
 import loginSignUpAccountBtn from './components/loginSignUpAccountBtn'
+import Popup from './components/popup/Popup'
 
 export default {
   name: 'App',
   components: {
-    loginSignUpAccountBtn
+    loginSignUpAccountBtn,
+    Popup
   },
   methods: {
     goHome () {
@@ -66,7 +70,7 @@ export default {
   data: () => ({
     drawer: false,
     primaryColor: '#455A64',
-    title: 'Limbia',
+    title: 'Limba',
     teamName: 'L\'API VIENT EN MANGEANT',
     linkList: [
       { name: 'Home', to: '/' },
