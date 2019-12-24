@@ -1,5 +1,3 @@
-// import json from './dictionary.json'
-
 /**
  * The game controller
  * @module gameController
@@ -31,9 +29,14 @@ var dictionnary = [
  * @param {Object} res - the response
  */
 gameController.randomWord = async function(req, res) {
+  let jsonData = require('../ressources/words_dictionary.json');
+  let random = Math.floor(Math.random() * Object.keys(jsonData).length)
+  let randomWord = Object.keys(jsonData)[random]
+  console.log('random word : ',randomWord)
+
   res
     .status(200)
-    .json({ word: dictionnary[Math.floor(Math.random() * dictionnary.length)] })
+    .json({ word: randomWord })
 }
 
 /**
@@ -60,5 +63,9 @@ gameController.translate = async function(req, res) {
     }
   })
 }
+
+// gameController.verify = async function (req, res) {
+//
+// }
 
 module.exports = gameController
