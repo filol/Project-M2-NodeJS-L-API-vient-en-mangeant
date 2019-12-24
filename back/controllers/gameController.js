@@ -90,9 +90,14 @@ gameController.translate = async function (req, res) {
   })
 }
 
-// gameController.verify = async function (req, res) {
-//
-// }
+gameController.verify = async function (req, res) {
+  const tokenUser = req.query.token
+  const idUser = tokenUser // TODO
+  const wordUser = req.body.word
+  // Ici on fait une recherche dans la bdd par l'id de l'utilisateur en prenant le dernier élément (en se servant du champs created_at)
+  // On check s'il lui reste des essai sauf si mode bac a sable (voir difficulty) puis on décrémente de 1
+  // On récupere ensuite le mot et on vérifie si c'est le bon
+}
 
 gameController.validate = method => {
   switch (method) {
