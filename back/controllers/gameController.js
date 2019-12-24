@@ -1,3 +1,8 @@
+const utilsReq = require('../utils/VerifyRequest')
+const Question = require('../models/Question')
+const logger = require('../services/logger')
+const { check, param, validationResult } = require('express-validator')
+
 /**
  * The game controller
  * @module gameController
@@ -28,15 +33,36 @@ var dictionnary = [
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-gameController.randomWord = async function(req, res) {
-  let jsonData = require('../ressources/words_dictionary.json');
-  let random = Math.floor(Math.random() * Object.keys(jsonData).length)
-  let randomWord = Object.keys(jsonData)[random]
-  console.log('random word : ',randomWord)
+gameController.randomWord = async function (req, res) {
+  // Vérification des toutes les données requises
+  utilsReq.verify(req)
 
-  res
-    .status(200)
-    .json({ word: randomWord })
+  // Lecture du fichier JSON contenant les mots
+  let jsonData = require('../ressources/words_dictionary.json')
+  // Génération d'un nombre random en fct de la taille du fichier
+  let random = Math.floor(Math.random() * Object.keys(jsonData).length)
+  // On récupère la clé du json à l'aide du nombre random
+  let randomWord = Object.keys(jsonData)[random]
+  console.log('random word : ', randomWord)
+
+  // On créé un enregistrement en bdd
+  const questionData = {
+    idUser: 1,//req.query.token, // TODO recuperer l'id de l'utilisateur à l'aide de son token
+    wordToFind: randomWord,
+    remainingTrial: 3, // TODO A changer en fct de la difficulté
+    difficulty: req.query.difficulty, // TODO Vérifier que la difficulté existe bien
+  }
+
+  Question.create(questionData, (err, question) => {
+    if (err) {
+      logger.error(err)
+      res.status(500).json({ error: err.message })
+    } else {
+      res
+        .status(200)
+        .json({ word: randomWord })
+    }
+  })
 }
 
 /**
@@ -47,14 +73,14 @@ gameController.randomWord = async function(req, res) {
  * @param {Object} res - the response
  */
 
-gameController.translate = async function(req, res) {
+gameController.translate = async function (req, res) {
   var translate = new AWS.Translate({ apiVersion: '2017-07-01' })
   var params = {
     SourceLanguageCode: 'en' /* required */,
     TargetLanguageCode: req.query.language /* required */,
     Text: req.query.word /* required */,
   }
-  await translate.translateText(params, function(err, data) {
+  await translate.translateText(params, function (err, data) {
     if (err) {
       res.status(400).json({ error: 'error' })
       console.log(err, err.stack)
@@ -67,5 +93,16 @@ gameController.translate = async function(req, res) {
 // gameController.verify = async function (req, res) {
 //
 // }
+
+gameController.validate = method => {
+  switch (method) {
+    case 'randomWord': {
+      return [
+        param('token', 'Username missing').exists(),
+        param('difficulty', 'Password missing').exists()
+      ]
+    }
+  }
+}
 
 module.exports = gameController
