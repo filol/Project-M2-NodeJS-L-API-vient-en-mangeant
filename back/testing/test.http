@@ -25,3 +25,15 @@ Content-Type: application/json
 ###
 // Logout user
 GET {{url}}/users/logout
+
+
+###
+// get a random word
+GET {{url}}/game/randomWord
+
+
+###
+// Translate the word 'hello' to italian
+GET {{url}}/game/translate?word=hello&language=it
+
+
