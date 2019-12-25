@@ -16,16 +16,6 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
   IdentityPoolId: 'us-east-1:d5beba94-b05a-49ce-b90c-a2c2ad452e44',
 })
 
-var dictionnary = [
-  'machine',
-  'hello',
-  'computer',
-  'pencil',
-  'keyboard',
-  'hand',
-  'thumb',
-]
-
 /**
  *  choose a random english word
  * @member randomWord
@@ -33,7 +23,7 @@ var dictionnary = [
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-gameController.randomWord = async function (req, res) {
+gameController.randomWord = async function(req, res) {
   // Vérification des toutes les données requises
   utilsReq.verify(req)
 
@@ -47,7 +37,7 @@ gameController.randomWord = async function (req, res) {
 
   // On créé un enregistrement en bdd
   const questionData = {
-    idUser: 1,//req.query.token, // TODO recuperer l'id de l'utilisateur à l'aide de son token
+    idUser: 3, //req.query.token, // TODO recuperer l'id de l'utilisateur à l'aide de son token
     wordToFind: randomWord,
     remainingTrial: 3, // TODO A changer en fct de la difficulté
     difficulty: req.query.difficulty, // TODO Vérifier que la difficulté existe bien
@@ -58,9 +48,7 @@ gameController.randomWord = async function (req, res) {
       logger.error(err)
       res.status(500).json({ error: err.message })
     } else {
-      res
-        .status(200)
-        .json({ word: randomWord })
+      res.status(200).json({ word: randomWord })
     }
   })
 }
@@ -73,14 +61,14 @@ gameController.randomWord = async function (req, res) {
  * @param {Object} res - the response
  */
 
-gameController.translate = async function (req, res) {
+gameController.translate = async function(req, res) {
   var translate = new AWS.Translate({ apiVersion: '2017-07-01' })
   var params = {
     SourceLanguageCode: 'en' /* required */,
     TargetLanguageCode: req.query.language /* required */,
     Text: req.query.word /* required */,
   }
-  await translate.translateText(params, function (err, data) {
+  await translate.translateText(params, function(err, data) {
     if (err) {
       res.status(400).json({ error: 'error' })
       console.log(err, err.stack)
@@ -90,7 +78,7 @@ gameController.translate = async function (req, res) {
   })
 }
 
-gameController.verify = async function (req, res) {
+gameController.verify = async function(req, res) {
   const tokenUser = req.query.token
   const idUser = tokenUser // TODO
   const wordUser = req.body.word
@@ -104,7 +92,7 @@ gameController.validate = method => {
     case 'randomWord': {
       return [
         param('token', 'Username missing').exists(),
-        param('difficulty', 'Password missing').exists()
+        param('difficulty', 'Password missing').exists(),
       ]
     }
   }
