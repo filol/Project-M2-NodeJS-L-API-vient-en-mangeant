@@ -78,6 +78,45 @@ gameController.translate = async function(req, res) {
   })
 }
 
+/**
+ * return pronunciation of word in a specific language
+ * @member translate
+ * @function
+ * @param {Object} req - the request
+ * @param {Object} res - the response
+ */
+
+gameController.pronounce = async function(req, res) {
+  // available languages and speaker names associated with them
+  var lanuageIds = ['fr-FR', 'es-ES', 'it-IT', 'de-DE', 'en-US']
+  var voiceIds = ['Mathieu', 'Enrique', 'Giorgio', 'Hans', 'Matthew']
+
+  // Create the JSON parameters for getSynthesizeSpeechUrl
+  var speechParams = {
+    OutputFormat: 'mp3',
+    SampleRate: '16000',
+    Text: '',
+    TextType: 'text',
+    LanguageCode: req.query.language, // language code (eg. 'it-IT') passed as GET param
+    VoiceId: voiceIds[lanuageIds.indexOf(req.query.language)], // auto selection of voice for this language code
+  }
+  // word to pronounce
+  speechParams.Text = req.query.word
+
+  // Create the Polly service object and presigner object
+  var polly = new AWS.Polly({ apiVersion: '2016-06-10' })
+  var signer = new AWS.Polly.Presigner(speechParams, polly)
+  signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
+    if (error) {
+      res.status(500).json({ message: error })
+      console.log(error)
+    } else {
+      // return a mp3 URL that can be used on the client side (with an HTML audio player) to read the word
+      res.status(200).json({ pronunciation: url })
+    }
+  })
+}
+
 gameController.verify = async function(req, res) {
   const tokenUser = req.query.token
   const idUser = tokenUser // TODO

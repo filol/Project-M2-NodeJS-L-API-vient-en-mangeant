@@ -37,3 +37,8 @@ GET {{url}}/game/randomWord
 GET {{url}}/game/translate?word=hello&language=it
 
 
+###
+// Get pronunciation URL of the word 'ciao' in italian
+GET {{url}}/game/pronounce?word=ciao&language=it-IT
+
+
