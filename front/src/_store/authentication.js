@@ -14,39 +14,34 @@ export const authentication = {
   actions: {
     login ({ dispatch, commit }, { username, password }) {
       commit('loginRequest', { username })
+      // dispatch('notification/info', 'Logging in ...', { root: true })
 
       authService.login(username, password)
         .then(
-          user => {
-            if (user === false) commit('loginFailure')
-            else {
-              commit('loginSuccess', user)
-              router.push('/')
-            }
-          },
-          error => {
-            commit('loginFailure', error)
-            // dispatch('alert/error', error, { root: true })
+          response => {
+            commit('loginSuccess', response.data.user)
+            dispatch('notification/success', 'Successful login', { root: true })
+            router.push('/')
           }
-        )
+        ).catch(err => {
+          commit('loginFailure', err)
+          dispatch('notification/error', err, { root: true })
+        })
     },
     register ({ dispatch, commit }, { username, email, password }) {
       commit('loginRequest', { username })
 
       authService.register(username, email, password)
         .then(
-          user => {
-            if (user === false) commit('loginFailure')
-            else {
-              commit('loginSuccess', user)
-              router.push('/')
-            }
-          },
-          error => {
-            commit('loginFailure', error)
-            // dispatch('alert/error', error, { root: true })
+          response => {
+            commit('loginSuccess', response.data.user)
+            dispatch('notification/success', 'Successful registration', { root: true })
+            router.push('/')
           }
-        )
+        ).catch(err => {
+          commit('loginFailure', err)
+          dispatch('notification/error', err, { root: true })
+        })
     },
     logout ({ commit }) {
       authService.logout()
@@ -63,11 +58,11 @@ export const authentication = {
       state.user = user
     },
     loginFailure (state) {
-      state.status = {}
+      state.status = { loggedIn: false }
       state.user = null
     },
     logout (state) {
-      state.status = {}
+      state.status = { loggedIn: false }
       state.user = null
     }
   }

@@ -8,16 +8,17 @@ export const authService = { login, register, logout }
  * @param {String} password - the client password
  */
 function login (username, password) {
-  return axiosAPI
-    .post('/users/login', { username: username, password: password })
-    .then(response => {
-      if (response.success === true) return true
-      return false
-    })
-    .catch(err => {
-      console.error('err: ', err)
-      return false
-    })
+  return new Promise((resolve, reject) => {
+    axiosAPI
+      .post('/users/login', { username: username, password: password })
+      .then(response => {
+        resolve(response)
+      })
+      .catch(err => {
+        console.error('err: ', err)
+        reject(new Error('Wrong email or password'))
+      })
+  })
 }
 
 /**
@@ -27,15 +28,17 @@ function login (username, password) {
  * @param {String} password - the client password
  */
 function register (username, email, password) {
-  return axiosAPI
-    .post('/users/register', { username: username, email: email, password: password })
-    .then(response => {
-      return true
-    })
-    .catch(err => {
-      console.error('err: ', err)
-      return false
-    })
+  return new Promise((resolve, reject) => {
+    axiosAPI
+      .post('/users/register', { username: username, email: email, password: password })
+      .then(response => {
+        resolve(response)
+      })
+      .catch(err => {
+        console.error('err: ', err)
+        reject(new Error('Wrong email or password'))
+      })
+  })
 }
 
 /**

@@ -46,7 +46,7 @@ authController.register = async function (req, res) {
       req.session.username = user.username
       res.cookie('username', user.username)
 
-      res.status(201).json({ user: user })
+      res.status(201).json({ username: user.username })
     }
   })
 }
@@ -71,19 +71,21 @@ authController.login = async function (req, res) {
     const password = req.body.password
 
     const user = await User.findOne({ username: username })
-    if (user && bcrypt.compareSync(password, user.password)) {
-      // Create token here
-      // const token = jwt.sign({ sub: user.id }, config.secret)
+    if (user) {
+      if (bcrypt.compareSync(password, user.password)) {
+        // Create token here
+        // const token = jwt.sign({ sub: user.id }, config.secret)
 
-      // Save user info in session
-      req.session.userId = user._id
-      req.session.username = user.username
-      res.cookie('username', user.username)
+        // Save user info in session
+        req.session.userId = user._id
+        req.session.username = user.username
+        res.cookie('username', user.username)
 
-      res.status(200).json({ success: true })
-    } else {
-      res.status(404).json({ success: false, message: 'Wrong email or password' })
-    }
+        res.status(200).json({ success: true, user: { username: user.username } })
+      } else {
+        res.status(401).json({ success: false, message: 'Wrong password' })
+      }
+    } else res.status(404).json({ success: false, message: 'Wrong email and/or password' })
   } catch (err) {
     logger.error(err)
     res.status(500).json({ error: err })
@@ -97,8 +99,15 @@ authController.login = async function (req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.logout = async function (req, res) {
-  res.send('logout')
+authController.logout = async function (req, res, next) {
+  req.session.destroy(function (err) {
+    if (err) {
+      return next(err)
+    } else {
+      res.clearCookie('username')
+      return res.redirect('/')
+    }
+  })
 }
 
 authController.validate = method => {
