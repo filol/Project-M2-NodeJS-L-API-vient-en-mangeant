@@ -1,0 +1,23 @@
+{
+  "name": "project-m2-nodejs-l-api-vient-en-mangeant",
+  "version": "1.0.0",
+  "description": "LIMBA est une application web qui a pour but d’améliorer son niveau de langue (plusieurs langues seront disponibles). L’idée est de faire écouter à l’utilisateur des mots et de lui demander ensuite de les écrire.",
+  "scripts": {
+    "client": "cd front && npm run serve",
+    "server": "cd back && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filol/Project-M2-NodeJS-L-API-vient-en-mangeant.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/filol/Project-M2-NodeJS-L-API-vient-en-mangeant/issues"
+  },
+  "homepage": "https://github.com/filol/Project-M2-NodeJS-L-API-vient-en-mangeant#readme",
+  "dependencies": {
+    "concurrently": "^5.0.2"
+  }
+}

@@ -1,0 +1,44 @@
+// HTTP requests for testing
+@url=http://localhost:3001
+
+###
+// Register a user
+POST {{url}}/users/register
+Content-Type: application/json
+
+{
+    "username": "test",
+    "password": "test",
+    "email": "test@test.com"
+}
+
+###
+// Login user
+POST {{url}}/users/login
+Content-Type: application/json
+
+{
+    "username": "test",
+    "password": "test"
+}
+
+###
+// Logout user
+GET {{url}}/users/logout
+
+
+###
+// get a random word
+GET {{url}}/game/randomWord
+
+
+###
+// Translate the word 'hello' to italian
+GET {{url}}/game/translate?word=hello&language=it
+
+
+###
+// Get pronunciation URL of the word 'ciao' in italian
+GET {{url}}/game/pronounce?word=ciao&language=it-IT
+
+
