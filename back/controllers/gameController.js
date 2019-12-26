@@ -1,6 +1,9 @@
 const utilsReq = require('../utils/VerifyRequest')
 const Question = require('../models/Question')
 const logger = require('../services/logger')
+const gameService = require('../services/gameService')
+const AWSService = require('../services/AWSService')
+
 const { check, param, validationResult } = require('express-validator')
 
 /**
@@ -9,47 +12,71 @@ const { check, param, validationResult } = require('express-validator')
  */
 var gameController = {}
 
-// Importing the AWS SDK (for translation or pronunciation)
-var AWS = require('aws-sdk')
-AWS.config.region = 'us-east-1'
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: 'us-east-1:d5beba94-b05a-49ce-b90c-a2c2ad452e44',
-})
-
 /**
- *  choose a random english word
+ *  choose a random english word and give us the prounonciation url
  * @member randomWord
  * @function
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-gameController.randomWord = async function(req, res) {
+gameController.randomWord = async function (req, res) {
   // Vérification des toutes les données requises
   utilsReq.verify(req)
 
-  // Lecture du fichier JSON contenant les mots
-  let jsonData = require('../ressources/words_dictionary.json')
-  // Génération d'un nombre random en fct de la taille du fichier
-  let random = Math.floor(Math.random() * Object.keys(jsonData).length)
-  // On récupère la clé du json à l'aide du nombre random
-  let randomWord = Object.keys(jsonData)[random]
+  const randomWord = gameService.getRandomWord()
   console.log('random word : ', randomWord)
 
-  // On créé un enregistrement en bdd
-  const questionData = {
-    idUser: 3, //req.query.token, // TODO recuperer l'id de l'utilisateur à l'aide de son token
-    wordToFind: randomWord,
-    remainingTrial: 3, // TODO A changer en fct de la difficulté
-    difficulty: req.query.difficulty, // TODO Vérifier que la difficulté existe bien
-  }
-
-  Question.create(questionData, (err, question) => {
+  gameService.getRemainingTrial(req.query.difficulty, (err, remainingTrial) => {
     if (err) {
-      logger.error(err)
-      res.status(500).json({ error: err.message })
-    } else {
-      res.status(200).json({ word: randomWord })
+      res.status(422).json({ error: 'La difficulté doit être easy, medium, hard ou sandbox' })
     }
+    // On créé un enregistrement en bdd
+    const questionData = {
+      idUser: req.session.userId,
+      wordToFind: randomWord,
+      remainingTrial: remainingTrial,
+      difficulty: req.query.difficulty,
+      language: req.query.language
+    }
+
+    Question.create(questionData, (err, question) => {
+      if (err) {
+        logger.error(err)
+        res.status(500).json({ error: err.message })
+      } else {
+        AWSService.translate(req.query.language, randomWord, (err, wordTranslated) => {
+          console.log('wordtranslated', wordTranslated)
+          if (err)
+            res.status(500).json({ error: err.message })
+          else {
+            let langAWS
+            switch (req.query.language) {
+              case 'fr':
+                langAWS = 'fr-FR'
+                break
+              case 'es':
+                langAWS = 'es-ES'
+                break
+              case 'it':
+                langAWS = 'it-IT'
+                break
+              case 'de':
+                langAWS = 'de-DE'
+                break
+              case 'en':
+                langAWS = 'en-US'
+                break
+            }
+            AWSService.pronounce(langAWS, wordTranslated, (err, url) => {
+              if (err)
+                res.status(500).json({ error: err.message })
+              else
+                res.status(200).json({ pronunciation: url })
+            })
+          }
+        })
+      }
+    })
   })
 }
 
@@ -60,20 +87,13 @@ gameController.randomWord = async function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-
-gameController.translate = async function(req, res) {
-  var translate = new AWS.Translate({ apiVersion: '2017-07-01' })
-  var params = {
-    SourceLanguageCode: 'en' /* required */,
-    TargetLanguageCode: req.query.language /* required */,
-    Text: req.query.word /* required */,
-  }
-  await translate.translateText(params, function(err, data) {
+gameController.translate = async function (req, res) {
+  AWSService.translate(req.query.language, req.query.word, (err, wordTranslated) => {
     if (err) {
       res.status(400).json({ error: 'error' })
       console.log(err, err.stack)
     } else {
-      res.status(200).json({ translation: data.TranslatedText })
+      res.status(200).json({ translation: wordTranslated })
     }
   })
 }
@@ -85,31 +105,10 @@ gameController.translate = async function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-
-gameController.pronounce = async function(req, res) {
-  // available languages and speaker names associated with them
-  var lanuageIds = ['fr-FR', 'es-ES', 'it-IT', 'de-DE', 'en-US']
-  var voiceIds = ['Mathieu', 'Enrique', 'Giorgio', 'Hans', 'Matthew']
-
-  // Create the JSON parameters for getSynthesizeSpeechUrl
-  var speechParams = {
-    OutputFormat: 'mp3',
-    SampleRate: '16000',
-    Text: '',
-    TextType: 'text',
-    LanguageCode: req.query.language, // language code (eg. 'it-IT') passed as GET param
-    VoiceId: voiceIds[lanuageIds.indexOf(req.query.language)], // auto selection of voice for this language code
-  }
-  // word to pronounce
-  speechParams.Text = req.query.word
-
-  // Create the Polly service object and presigner object
-  var polly = new AWS.Polly({ apiVersion: '2016-06-10' })
-  var signer = new AWS.Polly.Presigner(speechParams, polly)
-  signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
-    if (error) {
-      res.status(500).json({ message: error })
-      console.log(error)
+gameController.pronounce = async function (req, res) {
+  AWSService.pronounce(req.query.language, req.query.word, (err, url) => {
+    if (err) {
+      res.status(500).json({ message: err })
     } else {
       // return a mp3 URL that can be used on the client side (with an HTML audio player) to read the word
       res.status(200).json({ pronunciation: url })
@@ -117,7 +116,7 @@ gameController.pronounce = async function(req, res) {
   })
 }
 
-gameController.verify = async function(req, res) {
+gameController.verify = async function (req, res) {
   const tokenUser = req.query.token
   const idUser = tokenUser // TODO
   const wordUser = req.body.word
@@ -130,8 +129,7 @@ gameController.validate = method => {
   switch (method) {
     case 'randomWord': {
       return [
-        param('token', 'Username missing').exists(),
-        param('difficulty', 'Password missing').exists(),
+        param('difficulty', 'difficulty missing').exists(),
       ]
     }
   }

@@ -18,7 +18,7 @@ app.use(passport.initialize())
 // use sessions for tracking logins
 app.use(
   session({
-    secret: 'secret key a modifier',
+    secret: 'wxs1drf§tè!çok3l,nbvfr§è41!yiujhgh9f',
     resave: true,
     saveUninitialized: false,
     store: new MongoStore({
