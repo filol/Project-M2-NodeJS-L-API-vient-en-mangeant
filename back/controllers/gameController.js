@@ -116,13 +116,36 @@ gameController.pronounce = async function (req, res) {
   })
 }
 
+/**
+ * Permet à l'utilisateur de vérifier s'il a trouvé le bon mot
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 gameController.verify = async function (req, res) {
-  const tokenUser = req.query.token
-  const idUser = tokenUser // TODO
+  const idUser = req.session.userId
   const wordUser = req.body.word
-  // Ici on fait une recherche dans la bdd par l'id de l'utilisateur en prenant le dernier élément (en se servant du champs created_at)
-  // On check s'il lui reste des essai sauf si mode bac a sable (voir difficulty) puis on décrémente de 1
-  // On récupere ensuite le mot et on vérifie si c'est le bon
+  Question.findOne(
+    { idUser: idUser },
+    undefined,
+    {
+      sort: {
+        createdAt: -1 //Sort by Date DESC
+      }
+    },
+    (err, question) => {
+      console.log(question)
+      if (err)
+        res.status(500).json({ message: err })
+      if (question.remainingTrial !== -1 && question.remainingTrial <= 0) {
+        res.status(403).json({ 'message': 'Plus d\'essai restant' })
+      }
+      if (wordUser === question.wordToFind) {
+        res.status(200).json({ 'message': 'BRAVO' })
+        // TODO Update pour dire que le mot a été trouvé
+      }
+      // TODO décrémente le nb d'essai restant
+    })
 }
 
 gameController.validate = method => {
