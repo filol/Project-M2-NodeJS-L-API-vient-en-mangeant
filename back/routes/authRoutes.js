@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const authController = require('../controllers/authController')
 
-var authRoutes = function(passport) {
+var authRoutes = function (passport) {
   router.post(
     '/register',
     authController.validate('register'),
@@ -12,7 +12,7 @@ var authRoutes = function(passport) {
 
   router.post('/logout', authController.logout)
 
-  router.get('/account', authController.account)
+  router.post('/account', authController.account)
 
   return router
 }

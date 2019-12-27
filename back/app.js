@@ -11,7 +11,9 @@ const hookJWTStrategy = require('./services/passportStrategy')
 
 app.use(bodyParser.json())
 app.use(cookieParser())
-app.use(cors())
+
+const corsOptions = { credentials: true, origin: true }
+app.use(cors(corsOptions))
 
 /**
  *  Passport : Express-compatible authentication middleware for Node.js.
@@ -23,8 +25,9 @@ hookJWTStrategy(passport)
 app.use(
   session({
     secret: 'wxs1drf§tè!çok3l,nbvfr§è41!yiujhgh9f',
-    resave: true,
+    resave: false,
     saveUninitialized: false,
+    cookie: { maxAge: 8 * 60 * 60 * 1000, secure: false },
     store: new MongoStore({
       mongooseConnection: db
     })

@@ -35,7 +35,7 @@ export default {
   }),
   created () {
     axiosAPI
-      .get('/users/account')
+      .post('/users/account')
       .then(response => {
         console.log(response)
       })

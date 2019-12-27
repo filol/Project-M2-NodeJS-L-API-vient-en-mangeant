@@ -117,7 +117,7 @@ authController.login = async function (req, res) {
  * @param {Object} res - the response
  */
 authController.logout = async function (req, res, next) {
-  req.session.destroy(function (err) {
+  req.session.regenerate(function (err) {
     if (err) {
       next(err)
     } else {
@@ -155,12 +155,11 @@ authController.validate = method => {
  * @param {Object} res - the response
  */
 
-authController.account = async function(req, res, next) {
-  console.log(req.session.userId) // Pouquoi undefined ?
+authController.account = async function (req, res, next) {
   if (req.session.userId) {
     res.status(200).json({
       success: true,
-      user: { username: req.session.user, email: req.session.email },
+      user: { username: req.session.user, email: req.session.email }
     })
   } else {
     res.status(401).json({ success: false, message: "session doesn't exist !" })
