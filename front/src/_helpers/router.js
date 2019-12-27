@@ -6,6 +6,7 @@ import LoginPage from '../components/login/LoginPage.vue'
 import RegisterPage from '../components/login/RegisterPage.vue'
 import SandBoxPage from '../components/game/SandBoxPage.vue'
 import QuizzPage from '../components/game/QuizzPage.vue'
+import AccountPage from '../components/user/AccountPage.vue'
 
 Vue.use(Router)
 
@@ -17,7 +18,7 @@ export const router = new Router({
     { path: '/register', component: RegisterPage },
     { path: '/game/sandbox', component: SandBoxPage },
     { path: '/game/quizz', component: QuizzPage },
-
+    { path: '/user/account', component: AccountPage },
     // otherwise redirect to home
     { path: '*', redirect: '/' }
   ]

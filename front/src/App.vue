@@ -38,8 +38,8 @@
     <!-- MAIN CONTENT -->
     <v-content>
       <router-view></router-view>
-        <!-- ALERT POPUP -->
-        <Popup/>
+      <!-- ALERT POPUP -->
+      <Popup />
     </v-content>
 
     <!-- FOOTER -->
@@ -76,6 +76,7 @@ export default {
       { name: 'Home', to: '/' },
       { name: 'Sandbox', to: '/game/sandbox' },
       { name: 'Quizz', to: '/game/quizz' },
+      { name: 'My account', to: '/user/account' },
       { name: '', to: '' }
     ]
   })
