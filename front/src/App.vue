@@ -76,7 +76,6 @@ export default {
       { name: 'Home', to: '/' },
       { name: 'Sandbox', to: '/game/sandbox' },
       { name: 'Quizz', to: '/game/quizz' },
-      { name: 'My account', to: '/user/account' },
       { name: '', to: '' }
     ]
   })

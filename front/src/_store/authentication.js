@@ -1,12 +1,12 @@
 import { authService } from '../_services'
 import { router } from '../_helpers'
+import cookies from 'vue-cookies'
 
-// const user = JSON.parse(localStorage.getItem('user'))
-// const initialState = user
-//   ? { status: { loggedIn: true }, user}
-//   : { status: {}, user: null }
+const user = { username: cookies.get('username') }
 
-const initialState = { status: {}, user: null }
+const initialState = user.username
+  ? { status: { loggedIn: true }, user }
+  : { status: { loggedIn: false }, user: null }
 
 export const authentication = {
   namespaced: true,
