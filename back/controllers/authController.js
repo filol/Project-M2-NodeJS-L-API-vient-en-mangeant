@@ -2,6 +2,8 @@ const User = require('../models/User')
 const { check, validationResult } = require('express-validator')
 const logger = require('../services/logger')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const { keys } = require('../config/config')
 
 /**
  * The authentication controller
@@ -16,7 +18,7 @@ var authController = {}
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.register = async function(req, res) {
+authController.register = async function (req, res) {
   try {
     const errors = validationResult(req) // Finds the validation errors in this request and wraps them in an object with handy functions
 
@@ -33,7 +35,7 @@ authController.register = async function(req, res) {
   const userData = {
     username: req.body.username,
     password: req.body.password,
-    email: req.body.email,
+    email: req.body.email
   }
 
   User.create(userData, (err, user) => {
@@ -41,9 +43,15 @@ authController.register = async function(req, res) {
       logger.error(err)
       res.status(500).json({ error: err.message })
     } else {
-      // Save user info in session
+      // Create the JWT token for the passport JWT authentication
+      const token = jwt.sign({ id: user._id }, keys.secretJWT, {
+        expiresIn: '30m'
+      })
+
+      // Save user info in session & cookies
       req.session.userId = user._id
       req.session.username = user.username
+      res.cookie('token', token)
       res.cookie('username', user.username)
 
       res.status(201).json({ username: user.username })
@@ -58,7 +66,7 @@ authController.register = async function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.login = async function(req, res) {
+authController.login = async function (req, res) {
   try {
     const errors = validationResult(req) // Finds the validation errors in this request and wraps them in an object with handy functions
 
@@ -74,11 +82,14 @@ authController.login = async function(req, res) {
     if (user) {
       if (bcrypt.compareSync(password, user.password)) {
         // Create token here
-        // const token = jwt.sign({ sub: user.id }, config.secret)
-
+      // Create the JWT token for the passport JWT authentication
+        const token = jwt.sign({ id: user._id }, keys.secretJWT, {
+          expiresIn: '30m'
+        })
         // Save user info in session
         req.session.userId = user._id
         req.session.username = user.username
+        res.cookie('token', token)
         res.cookie('username', user.username)
 
         res
@@ -87,10 +98,11 @@ authController.login = async function(req, res) {
       } else {
         res.status(401).json({ success: false, message: 'Wrong password' })
       }
-    } else
+    } else {
       res
         .status(404)
         .json({ success: false, message: 'Wrong email and/or password' })
+    }
   } catch (err) {
     logger.error(err)
     res.status(500).json({ error: err })
@@ -104,13 +116,13 @@ authController.login = async function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.logout = async function(req, res, next) {
-  console.log(req.session.userId)
-  req.session.destroy(function(err) {
+authController.logout = async function (req, res, next) {
+  req.session.destroy(function (err) {
     if (err) {
       return next(err)
     } else {
       res.clearCookie('username')
+      res.clearCookies('token')
       return res.redirect('/')
     }
   })
@@ -123,13 +135,13 @@ authController.validate = method => {
         check('username', 'Username missing').exists(),
         check('password', 'Password missing').exists(),
         check('email', 'Email missing').exists(),
-        check('email', 'Email format wrong').isEmail(),
+        check('email', 'Email format wrong').isEmail()
       ]
     }
     case 'login': {
       return [
         check('username', 'Username missing').exists(),
-        check('password', 'Password missing').exists(),
+        check('password', 'Password missing').exists()
       ]
     }
   }
