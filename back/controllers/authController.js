@@ -16,7 +16,7 @@ var authController = {}
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.register = async function (req, res) {
+authController.register = async function(req, res) {
   try {
     const errors = validationResult(req) // Finds the validation errors in this request and wraps them in an object with handy functions
 
@@ -33,7 +33,7 @@ authController.register = async function (req, res) {
   const userData = {
     username: req.body.username,
     password: req.body.password,
-    email: req.body.email
+    email: req.body.email,
   }
 
   User.create(userData, (err, user) => {
@@ -58,7 +58,7 @@ authController.register = async function (req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.login = async function (req, res) {
+authController.login = async function(req, res) {
   try {
     const errors = validationResult(req) // Finds the validation errors in this request and wraps them in an object with handy functions
 
@@ -81,11 +81,16 @@ authController.login = async function (req, res) {
         req.session.username = user.username
         res.cookie('username', user.username)
 
-        res.status(200).json({ success: true, user: { username: user.username } })
+        res
+          .status(200)
+          .json({ success: true, user: { username: user.username } })
       } else {
         res.status(401).json({ success: false, message: 'Wrong password' })
       }
-    } else res.status(404).json({ success: false, message: 'Wrong email and/or password' })
+    } else
+      res
+        .status(404)
+        .json({ success: false, message: 'Wrong email and/or password' })
   } catch (err) {
     logger.error(err)
     res.status(500).json({ error: err })
@@ -99,8 +104,9 @@ authController.login = async function (req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.logout = async function (req, res, next) {
-  req.session.destroy(function (err) {
+authController.logout = async function(req, res, next) {
+  console.log(req.session.userId)
+  req.session.destroy(function(err) {
     if (err) {
       return next(err)
     } else {
@@ -117,13 +123,13 @@ authController.validate = method => {
         check('username', 'Username missing').exists(),
         check('password', 'Password missing').exists(),
         check('email', 'Email missing').exists(),
-        check('email', 'Email format wrong').isEmail()
+        check('email', 'Email format wrong').isEmail(),
       ]
     }
     case 'login': {
       return [
         check('username', 'Username missing').exists(),
-        check('password', 'Password missing').exists()
+        check('password', 'Password missing').exists(),
       ]
     }
   }
