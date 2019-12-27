@@ -135,4 +135,24 @@ authController.validate = method => {
   }
 }
 
+/**
+ * The myAccount function
+ * @member myAccount
+ * @function
+ * @param {Object} req - the request
+ * @param {Object} res - the response
+ */
+
+authController.account = async function(req, res, next) {
+  console.log(req.session.userId) // Pouquoi undefined ?
+  if (req.session.userId) {
+    res.status(200).json({
+      success: true,
+      user: { username: req.session.user, email: req.session.email },
+    })
+  } else {
+    res.status(401).json({ success: false, message: "session doesn't exist !" })
+  }
+}
+
 module.exports = authController

@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { axiosAPI } from '../../_helpers'
 
 export default {
   name: 'Limba',
@@ -33,7 +34,15 @@ export default {
     email: 'gregoire@gmail.com'
   }),
   created () {
-
+    axiosAPI
+      .get('/users/account')
+      .then(response => {
+        console.log(response)
+      })
+      .catch(err => {
+        console.error('err: ', err)
+        console.log('error while getting account informations')
+      })
   }
 }
 </script>
