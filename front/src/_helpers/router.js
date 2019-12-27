@@ -7,6 +7,7 @@ import RegisterPage from '../components/login/RegisterPage.vue'
 import SandBoxPage from '../components/game/SandBoxPage.vue'
 import QuizzPage from '../components/game/QuizzPage.vue'
 import AccountPage from '../components/user/AccountPage.vue'
+import { store } from '../_store'
 
 Vue.use(Router)
 
@@ -19,20 +20,21 @@ export const router = new Router({
     { path: '/game/sandbox', component: SandBoxPage },
     { path: '/game/quizz', component: QuizzPage },
     { path: '/user/account', component: AccountPage },
+
     // otherwise redirect to home
     { path: '*', redirect: '/' }
   ]
 })
 
-/* router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
   // redirect to login page if not logged in and trying to access a restricted page
-  const publicPages = ['/login']
+  const publicPages = ['/', '/game/sandbox', '/login', '/register']
   const authRequired = !publicPages.includes(to.path)
-  const loggedIn = localStorage.getItem('user')
+  const loggedIn = store.state.authentication.user
 
   if (authRequired && !loggedIn) {
     return next('/login')
   }
 
   next()
-}) */
+})

@@ -35,7 +35,7 @@ export default {
     handleLogout () {
       this.$store.dispatch('authentication/logout')
       if (this.$route.path !== '/') this.$router.push('/')
-      location.reload()
+      // location.reload()
     }
   }
 }
