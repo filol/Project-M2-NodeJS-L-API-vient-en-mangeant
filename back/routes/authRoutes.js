@@ -10,7 +10,7 @@ var authRoutes = function (passport) {
 
   router.post('/login', authController.validate('login'), authController.login)
 
-  router.get('/logout', authController.logout)
+  router.post('/logout', authController.logout)
 
   return router
 }

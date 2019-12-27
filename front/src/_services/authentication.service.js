@@ -45,8 +45,15 @@ function register (username, email, password) {
  * The logout function
  */
 function logout () {
-  // remove user from local storage to log user out
-  //   localStorage.removeItem('user')
+  axiosAPI
+    .post('/users/logout')
+    .then(response => {
+      return true
+    })
+    .catch((err) => {
+      console.error('err: ', err)
+      return false
+    })
 }
 
 /* function handleResponse (response) {

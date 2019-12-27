@@ -119,11 +119,11 @@ authController.login = async function (req, res) {
 authController.logout = async function (req, res, next) {
   req.session.destroy(function (err) {
     if (err) {
-      return next(err)
+      next(err)
     } else {
       res.clearCookie('username')
-      res.clearCookies('token')
-      return res.redirect('/')
+      res.clearCookie('token')
+      res.json({ success: true })
     }
   })
 }
