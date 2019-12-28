@@ -30,8 +30,8 @@ import { axiosAPI } from '../../_helpers'
 export default {
   name: 'Limba',
   data: () => ({
-    username: 'TheGreg41',
-    email: 'gregoire@gmail.com'
+    username: 'Loading ...',
+    email: 'Loading ...'
   }),
   created () {
     axiosAPI
