@@ -149,6 +149,43 @@ authController.validate = method => {
 }
 
 /**
+ * The delete function
+ * @member delete
+ * @function
+ * @param {Object} req - the request
+ * @param {Object} res - the response
+ */
+
+authController.delete = async function(req, res, next) {
+  const user = await User.findOne({ username: req.session.username })
+  if (user) {
+    User.findOneAndDelete({ _id: req.session.userId }, function(err) {
+      if (err) {
+        console.log(err)
+      } else {
+        req.session.regenerate(function(err) {
+          if (err) {
+            next(err)
+          } else {
+            res.clearCookie('username')
+            res.clearCookie('token')
+            res
+              .status(200)
+              .json({ success: true, message: 'User has been removed' })
+          }
+        })
+      }
+    })
+  } else {
+    res.status(401).json({
+      success: false,
+      message:
+        'An unexpected error occured while trying to remove the account !',
+    })
+  }
+}
+
+/**
  * The myAccount function
  * @member myAccount
  * @function

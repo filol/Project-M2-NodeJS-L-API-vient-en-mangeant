@@ -13,6 +13,7 @@ var authRoutes = function(passport) {
   router.post('/logout', authController.logout)
 
   router.get('/account', authController.account)
+  router.get('/delete', authController.delete)
 
   return router
 }
