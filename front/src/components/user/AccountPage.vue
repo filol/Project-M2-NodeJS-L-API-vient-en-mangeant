@@ -24,6 +24,43 @@
           </v-card-text>
         </v-col>
       </v-row>
+      <v-divider></v-divider>
+
+      <!-- Language selection select -->
+      <v-row class="mt-4" no-gutters justify="center" align="center">
+        <v-col cols="12" sm="8" md="8" lg="4">
+          <v-card-text>
+            <p>Language you want to learn</p>
+            <v-select
+              v-model="selectedLanguage"
+              :items="availableLanguages"
+              v-on:change="changeLanguage"
+              menu-props="auto"
+              label="Select"
+              hide-details
+              single-line
+            ></v-select>
+          </v-card-text>
+        </v-col>
+      </v-row>
+
+      <!-- Difficulty selection select -->
+      <v-row class="mt-2 mb-6" no-gutters justify="center" align="center">
+        <v-col cols="12" sm="8" md="8" lg="4">
+          <v-card-text>
+            <p>Difficulty</p>
+            <v-select
+              v-model="selectedDifficulty"
+              :items="availableDifficulties"
+              v-on:change="changeDifficulty"
+              menu-props="auto"
+              label="Select"
+              hide-details
+              single-line
+            ></v-select>
+          </v-card-text>
+        </v-col>
+      </v-row>
 
       <!-- Change password button and popup-->
       <v-row justify="center">
@@ -88,6 +125,10 @@ import { axiosAPI } from '../../_helpers'
 export default {
   name: 'Limba',
   data: () => ({
+    availableLanguages: ['fr', 'en', 'it', 'de', 'es'],
+    availableDifficulties: ['easy', 'medium', 'hard'],
+    selectedLanguage: '',
+    selectedDifficulty: '',
     dialog: false,
     newPassword: '',
     username: 'Loading ...',
@@ -112,7 +153,33 @@ export default {
         }).catch(err => {
           console.error('err: ', err)
         })
+    },
+    changeDifficulty (choice) {
+      axiosAPI
+        .post('/users/changeDifficulty', { difficulty: this.selectedDifficulty })
+        .then(response => {
+          console.log(response)
+          this.successSnackbar = true
+        })
+        .catch(err => {
+          console.error('err: ', err)
+          console.log('error while getting account informations')
+        })
+    },
+    changeLanguage (choice) {
+      console.log(choice)
+      axiosAPI
+        .post('/users/changeLanguage', { language: this.selectedLanguage })
+        .then(response => {
+          console.log(response)
+          this.successSnackbar = true
+        })
+        .catch(err => {
+          console.error('err: ', err)
+          console.log('error while getting account informations')
+        })
     }
+
   },
   created () {
     axiosAPI
@@ -120,6 +187,8 @@ export default {
       .then(response => {
         this.username = response.data.user.username
         this.email = response.data.user.email
+        this.selectedDifficulty = response.data.user.difficulty
+        this.selectedLanguage = response.data.user.language
       })
       .catch(err => {
         console.error('err: ', err)

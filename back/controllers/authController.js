@@ -90,6 +90,8 @@ authController.login = async function(req, res) {
         req.session.userId = user._id
         req.session.username = user.username
         req.session.email = user.email
+        req.session.language = user.language
+        req.session.difficulty = user.difficulty
         res.cookie('token', token)
         res.cookie('username', user.username)
 
@@ -195,12 +197,22 @@ authController.delete = async function(req, res, next) {
 
 authController.account = async function(req, res, next) {
   if (req.session.userId) {
-    res.status(200).json({
-      success: true,
-      user: { username: req.session.username, email: req.session.email },
-    })
-  } else {
-    res.status(401).json({ success: false, message: "session doesn't exist !" })
+    const user = await User.findOne({ _id: req.session.userId })
+    if (user) {
+      res.status(200).json({
+        success: true,
+        user: {
+          username: req.session.username,
+          email: req.session.email,
+          language: user.language,
+          difficulty: user.difficulty,
+        },
+      })
+    } else {
+      res
+        .status(401)
+        .json({ success: false, message: "session doesn't exist !" })
+    }
   }
 }
 
@@ -240,6 +252,70 @@ authController.changePassword = async function(req, res, next) {
     res.status(401).json({
       success: false,
       message: 'Error. The password length or current session is wrong',
+    })
+  }
+}
+
+authController.changeDifficulty = async function(req, res, next) {
+  const newDifficulty = req.body.difficulty
+
+  const user = await User.findOne({ _id: req.session.userId })
+  if (
+    user &&
+    (newDifficulty === 'easy' ||
+      newDifficulty === 'medium' ||
+      newDifficulty === 'hard')
+  ) {
+    User.updateOne(
+      { _id: req.session.userId },
+      {
+        difficulty: newDifficulty,
+      },
+      function(err) {
+        console.log(err)
+      }
+    )
+    res.status(200).json({
+      success: true,
+      message: 'Difficulty has been successfully changed !',
+    })
+  } else {
+    res.status(401).json({
+      success: false,
+      message: 'Error. The session and/or new difficulty is wrong',
+    })
+  }
+}
+
+authController.changeLanguage = async function(req, res, next) {
+  const newLanguage = req.body.language
+
+  const user = await User.findOne({ _id: req.session.userId })
+  if (
+    user &&
+    (newLanguage === 'fr' ||
+      newLanguage === 'en' ||
+      newLanguage === 'es' ||
+      newLanguage === 'it' ||
+      newLanguage === 'de')
+  ) {
+    User.updateOne(
+      { _id: req.session.userId },
+      {
+        language: newLanguage,
+      },
+      function(err) {
+        console.log(err)
+      }
+    )
+    res.status(200).json({
+      success: true,
+      message: 'Language has been successfully changed !',
+    })
+  } else {
+    res.status(401).json({
+      success: false,
+      message: 'Error. The session and/or new difficulty is wrong',
     })
   }
 }
