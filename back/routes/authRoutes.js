@@ -14,6 +14,7 @@ var authRoutes = function(passport) {
 
   router.get('/account', authController.account)
   router.get('/delete', authController.delete)
+  router.post('/changePassword', authController.changePassword)
 
   return router
 }

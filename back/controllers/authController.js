@@ -204,4 +204,44 @@ authController.account = async function(req, res, next) {
   }
 }
 
+/**
+ * The changePassword function
+ * @member changePassword
+ * @function
+ * @param {Object} req - the request
+ * @param {Object} res - the response
+ */
+
+authController.changePassword = async function(req, res, next) {
+  const newPassword = req.body.password
+
+  const user = await User.findOne({ _id: req.session.userId })
+  if (user && newPassword.length > 2 && newPassword.length < 400) {
+    bcrypt.hash(newPassword, 10, function(err, hash) {
+      if (err) {
+        console.log(err)
+      } else {
+        User.update(
+          { _id: req.session.userId },
+          {
+            password: hash,
+          },
+          function(err) {
+            console.log(err)
+          }
+        )
+        res.status(200).json({
+          success: true,
+          message: 'Password has been succesfully modified !',
+        })
+      }
+    })
+  } else {
+    res.status(401).json({
+      success: false,
+      message: 'Error. The password length or current session is wrong',
+    })
+  }
+}
+
 module.exports = authController

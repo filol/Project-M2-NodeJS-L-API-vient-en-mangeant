@@ -20,6 +20,35 @@
           </v-card-text>
         </v-col>
       </v-row>
+
+      <v-row justify="center">
+        <v-dialog v-model="dialog" scrollable max-width="300px">
+          <template v-slot:activator="{ on }">
+            <v-btn color="primary" dark v-on="on">Change my password</v-btn>
+          </template>
+          <v-card>
+            <v-card-title>Enter a new password</v-card-title>
+            <v-divider></v-divider>
+            <v-card-text style="height: 10px;"></v-card-text>
+            <v-text-field
+              v-model="newPassword"
+              type="password"
+              label="New password"
+              outlined
+              shaped
+            ></v-text-field>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-btn
+                v-on:click="changePassword()"
+                color="blue darken-1"
+                text
+                @click="dialog = false"
+              >Validate</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
       <v-row no-gutters justify="center" align="center">
         <v-col cols="12" sm="12" md="12" lg="12" justify="center" align="center">
           <v-card-text>
@@ -37,6 +66,8 @@ import { axiosAPI } from '../../_helpers'
 export default {
   name: 'Limba',
   data: () => ({
+    dialog: false,
+    newPassword: '',
     username: 'Loading ...',
     email: 'Loading ...'
   }),
@@ -46,6 +77,14 @@ export default {
         .get('/users/delete').then(response => {
           this.$store.dispatch('authentication/logout')
           if (this.$route.path !== '/') this.$router.push('/')
+        }).catch(err => {
+          console.error('err: ', err)
+        })
+    },
+    changePassword () {
+      axiosAPI
+        .post('/users/changePassword', { password: this.newPassword }).then(response => {
+          console.log(response)
         }).catch(err => {
           console.error('err: ', err)
         })
