@@ -1,9 +1,11 @@
 <template>
   <v-container>
+    <!-- header logo -->
     <v-row no-gutters justify="center" align="center" class="text-center">
       <v-icon x-large>mdi-account</v-icon>
     </v-row>
     <v-card>
+      <!-- Pseudo label -->
       <v-row no-gutters justify="center" align="center">
         <v-col cols="12" sm="8" md="8" lg="4">
           <v-card-text>
@@ -12,6 +14,8 @@
           </v-card-text>
         </v-col>
       </v-row>
+
+      <!-- Email label -->
       <v-row no-gutters justify="center" align="center">
         <v-col cols="12" sm="8" md="8" lg="4">
           <v-card-text>
@@ -21,6 +25,7 @@
         </v-col>
       </v-row>
 
+      <!-- Change password button and popup-->
       <v-row justify="center">
         <v-dialog v-model="dialog" scrollable max-width="300px">
           <template v-slot:activator="{ on }">
@@ -49,6 +54,8 @@
           </v-card>
         </v-dialog>
       </v-row>
+
+      <!-- Delete account button -->
       <v-row no-gutters justify="center" align="center">
         <v-col cols="12" sm="12" md="12" lg="12" justify="center" align="center">
           <v-card-text>
@@ -57,6 +64,21 @@
         </v-col>
       </v-row>
     </v-card>
+
+    <!-- Modifications changed success snackbar -->
+    <v-snackbar v-model="successSnackbar" :vertical="true" :timeout="2000">
+      <v-row align="center" justify="center">
+        <h1>Modifications saved</h1>
+      </v-row>
+      <v-row align="center" justify="center">
+        <v-img
+          src="https://img.pngio.com/validate-input-data-using-validator-in-vapor-20-swiftyjimmy-validate-png-270_270.png"
+          aspect-ratio="1"
+          max-width="100"
+          max-height="100"
+        ></v-img>
+      </v-row>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -69,7 +91,8 @@ export default {
     dialog: false,
     newPassword: '',
     username: 'Loading ...',
-    email: 'Loading ...'
+    email: 'Loading ...',
+    successSnackbar: false
   }),
   methods: {
     deleteAccount () {
@@ -84,6 +107,7 @@ export default {
     changePassword () {
       axiosAPI
         .post('/users/changePassword', { password: this.newPassword }).then(response => {
+          this.successSnackbar = true
           console.log(response)
         }).catch(err => {
           console.error('err: ', err)
