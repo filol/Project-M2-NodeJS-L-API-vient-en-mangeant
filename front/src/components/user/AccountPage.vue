@@ -35,9 +35,10 @@ export default {
   }),
   created () {
     axiosAPI
-      .post('/users/account')
+      .get('/users/account')
       .then(response => {
-        console.log(response)
+        this.username = response.data.user.username
+        this.email = response.data.user.email
       })
       .catch(err => {
         console.error('err: ', err)

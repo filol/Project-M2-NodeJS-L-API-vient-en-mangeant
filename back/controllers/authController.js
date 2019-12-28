@@ -18,7 +18,7 @@ var authController = {}
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.register = async function (req, res) {
+authController.register = async function(req, res) {
   try {
     const errors = validationResult(req) // Finds the validation errors in this request and wraps them in an object with handy functions
 
@@ -35,7 +35,7 @@ authController.register = async function (req, res) {
   const userData = {
     username: req.body.username,
     password: req.body.password,
-    email: req.body.email
+    email: req.body.email,
   }
 
   User.create(userData, (err, user) => {
@@ -45,7 +45,7 @@ authController.register = async function (req, res) {
     } else {
       // Create the JWT token for the passport JWT authentication
       const token = jwt.sign({ id: user._id }, keys.secretJWT, {
-        expiresIn: '30m'
+        expiresIn: '30m',
       })
 
       // Save user info in session & cookies
@@ -66,7 +66,7 @@ authController.register = async function (req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.login = async function (req, res) {
+authController.login = async function(req, res) {
   try {
     const errors = validationResult(req) // Finds the validation errors in this request and wraps them in an object with handy functions
 
@@ -82,13 +82,14 @@ authController.login = async function (req, res) {
     if (user) {
       if (bcrypt.compareSync(password, user.password)) {
         // Create token here
-      // Create the JWT token for the passport JWT authentication
+        // Create the JWT token for the passport JWT authentication
         const token = jwt.sign({ id: user._id }, keys.secretJWT, {
-          expiresIn: '30m'
+          expiresIn: '30m',
         })
         // Save user info in session
         req.session.userId = user._id
         req.session.username = user.username
+        req.session.email = user.email
         res.cookie('token', token)
         res.cookie('username', user.username)
 
@@ -116,8 +117,8 @@ authController.login = async function (req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.logout = async function (req, res, next) {
-  req.session.regenerate(function (err) {
+authController.logout = async function(req, res, next) {
+  req.session.regenerate(function(err) {
     if (err) {
       next(err)
     } else {
@@ -135,13 +136,13 @@ authController.validate = method => {
         check('username', 'Username missing').exists(),
         check('password', 'Password missing').exists(),
         check('email', 'Email missing').exists(),
-        check('email', 'Email format wrong').isEmail()
+        check('email', 'Email format wrong').isEmail(),
       ]
     }
     case 'login': {
       return [
         check('username', 'Username missing').exists(),
-        check('password', 'Password missing').exists()
+        check('password', 'Password missing').exists(),
       ]
     }
   }
@@ -155,11 +156,11 @@ authController.validate = method => {
  * @param {Object} res - the response
  */
 
-authController.account = async function (req, res, next) {
+authController.account = async function(req, res, next) {
   if (req.session.userId) {
     res.status(200).json({
       success: true,
-      user: { username: req.session.user, email: req.session.email }
+      user: { username: req.session.username, email: req.session.email },
     })
   } else {
     res.status(401).json({ success: false, message: "session doesn't exist !" })
