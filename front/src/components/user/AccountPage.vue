@@ -20,6 +20,13 @@
           </v-card-text>
         </v-col>
       </v-row>
+      <v-row no-gutters justify="center" align="center">
+        <v-col cols="12" sm="12" md="12" lg="12" justify="center" align="center">
+          <v-card-text>
+            <v-btn v-on:click="deleteAccount()" large color="error">Delete my account</v-btn>
+          </v-card-text>
+        </v-col>
+      </v-row>
     </v-card>
   </v-container>
 </template>
@@ -33,6 +40,17 @@ export default {
     username: 'Loading ...',
     email: 'Loading ...'
   }),
+  methods: {
+    deleteAccount () {
+      axiosAPI
+        .get('/users/delete').then(response => {
+          this.$store.dispatch('authentication/logout')
+          if (this.$route.path !== '/') this.$router.push('/')
+        }).catch(err => {
+          console.error('err: ', err)
+        })
+    }
+  },
   created () {
     axiosAPI
       .get('/users/account')
