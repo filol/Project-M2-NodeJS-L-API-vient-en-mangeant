@@ -29,17 +29,33 @@ POST {{url}}/users/logout
 
 ###
 // get a random word
-GET {{url}}/game/randomWord
+POST {{url}}/game/randomWord?difficulty=easy
+Content-Type: application/json
 
+{
+    "difficulty": "easy",
+    "language": "en"
+}
 
 ###
 // Translate the word 'hello' to italian
-GET {{url}}/game/translate?word=hello&language=it
+POST {{url}}/game/translate
+Content-Type: application/json
 
+{
+    "word": "hello",
+    "language": "it"
+}
 
 ###
 // Get pronunciation URL of the word 'ciao' in italian
-GET {{url}}/game/pronounce?word=ciao&language=it-IT
+POST {{url}}/game/pronounce
+Content-Type: application/json
+
+{
+    "word": "ciao",
+    "language": "it-IT"
+}
 
 ###
 GET {{url}}/users/delete

@@ -4,7 +4,7 @@ const logger = require('../services/logger')
 const gameService = require('../services/gameService')
 const AWSService = require('../services/AWSService')
 
-const { check, param, validationResult } = require('express-validator')
+const { param } = require('express-validator')
 
 /**
  * The game controller
@@ -13,7 +13,7 @@ const { check, param, validationResult } = require('express-validator')
 var gameController = {}
 
 /**
- *  choose a random english word and give us the prounonciation url
+ * Choose a random english word and give us the pronunciation url
  * @member randomWord
  * @function
  * @param {Object} req - the request
@@ -25,18 +25,21 @@ gameController.randomWord = async function (req, res) {
 
   const randomWord = gameService.getRandomWord()
   console.log('random word : ', randomWord)
+  const language = req.body.language
+  const difficulty = req.body.difficulty
 
-  gameService.getRemainingTrial(req.query.difficulty, (err, remainingTrial) => {
+  gameService.getRemainingTrial(difficulty, (err, remainingTrial) => {
     if (err) {
       res.status(422).json({ error: 'La difficulté doit être easy, medium, hard ou sandbox' })
+      return
     }
-    // On créé un enregistrement en bdd
+    // On crée un enregistrement en bdd
     const questionData = {
       idUser: req.session.userId,
       wordToFind: randomWord,
       remainingTrial: remainingTrial,
-      difficulty: req.query.difficulty,
-      language: req.query.language
+      difficulty: difficulty,
+      language: language
     }
 
     Question.create(questionData, (err, question) => {
@@ -44,11 +47,11 @@ gameController.randomWord = async function (req, res) {
         logger.error(err)
         res.status(500).json({ error: err.message })
       } else {
-        AWSService.translate(req.query.language, randomWord, (err, wordTranslated) => {
+        AWSService.translate(language, randomWord, (err, wordTranslated) => {
           console.log('wordtranslated', wordTranslated)
           if (err) { res.status(500).json({ error: err.message }) } else {
             let langAWS
-            switch (req.query.language) {
+            switch (language) {
               case 'fr':
                 langAWS = 'fr-FR'
                 break
@@ -83,7 +86,7 @@ gameController.randomWord = async function (req, res) {
  * @param {Object} res - the response
  */
 gameController.translate = async function (req, res) {
-  AWSService.translate(req.query.language, req.query.word, (err, wordTranslated) => {
+  AWSService.translate(req.body.language, req.body.word, (err, wordTranslated) => {
     if (err) {
       res.status(400).json({ error: 'error' })
       console.log(err, err.stack)
@@ -101,7 +104,7 @@ gameController.translate = async function (req, res) {
  * @param {Object} res - the response
  */
 gameController.pronounce = async function (req, res) {
-  AWSService.pronounce(req.query.language, req.query.word, (err, url) => {
+  AWSService.pronounce(req.body.language, req.body.word, (err, url) => {
     if (err) {
       res.status(500).json({ message: err })
     } else {

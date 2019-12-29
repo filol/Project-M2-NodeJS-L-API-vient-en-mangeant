@@ -27,7 +27,7 @@ AWSService.translate = function (language, word, next) {
 
 AWSService.pronounce = function (language, word, next) {
   // available languages and speaker names associated with them
-  var lanuageIds = ['fr-FR', 'es-ES', 'it-IT', 'de-DE', 'en-US']
+  var languageIds = ['fr-FR', 'es-ES', 'it-IT', 'de-DE', 'en-US']
   var voiceIds = ['Mathieu', 'Enrique', 'Giorgio', 'Hans', 'Matthew']
 
   // Create the JSON parameters for getSynthesizeSpeechUrl
@@ -37,7 +37,7 @@ AWSService.pronounce = function (language, word, next) {
     Text: '',
     TextType: 'text',
     LanguageCode: language, // language code (eg. 'it-IT') passed as GET param
-    VoiceId: voiceIds[lanuageIds.indexOf(language)] // auto selection of voice for this language code
+    VoiceId: voiceIds[languageIds.indexOf(language)] // auto selection of voice for this language code
   }
   // word to pronounce
   speechParams.Text = word

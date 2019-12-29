@@ -6,9 +6,9 @@ var gameService = {}
  */
 gameService.getRandomWord = function () {
   // Lecture du fichier JSON contenant les mots
-  let jsonData = require('../ressources/words_dictionary.json')
+  const jsonData = require('../ressources/words_dictionary.json')
   // Génération d'un nombre random en fct de la taille du fichier
-  let random = Math.floor(Math.random() * Object.keys(jsonData).length)
+  const random = Math.floor(Math.random() * Object.keys(jsonData).length)
   // On récupère la clé du json à l'aide du nombre random
   return Object.keys(jsonData)[random]
 }
