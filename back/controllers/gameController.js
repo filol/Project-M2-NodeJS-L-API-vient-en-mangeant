@@ -137,14 +137,29 @@ gameController.verify = async function (req, res) {
       console.log(question)
       if (err)
         res.status(500).json({ message: err })
+      if (question.find) {
+        res.status(403).json({ 'message': 'You have already found the last word' })
+      }
       if (question.remainingTrial !== -1 && question.remainingTrial <= 0) {
-        res.status(403).json({ 'message': 'Plus d\'essai restant' })
+        res.status(403).json({ 'message': 'No more trial remaining' })
+      }
+      if (question.remainingTrial !== -1) {
+        question.remainingTrial -= 1
       }
       if (wordUser === question.wordToFind) {
-        res.status(200).json({ 'message': 'BRAVO' })
-        // TODO Update pour dire que le mot a été trouvé
+        res.status(200).json({ 'message': 'WELL DONE' })
+        question.find = true
+      } else {
+        res.status(418).json({ 'message': 'Nope, it was not this' })
       }
-      // TODO décrémente le nb d'essai restant
+      question.save(function (err) {
+        if (!err) {
+          console.log('question ' + question._id + ' created at ' + question.createdAt + ' updated at ' + question.updatedAt)
+        } else {
+          console.log('Error: could not save question ' + question._id)
+          res.status(500).json({ message: err })
+        }
+      })
     })
 }
 
