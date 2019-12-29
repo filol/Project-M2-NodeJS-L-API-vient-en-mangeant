@@ -46,9 +46,7 @@ gameController.randomWord = async function (req, res) {
       } else {
         AWSService.translate(req.query.language, randomWord, (err, wordTranslated) => {
           console.log('wordtranslated', wordTranslated)
-          if (err)
-            res.status(500).json({ error: err.message })
-          else {
+          if (err) { res.status(500).json({ error: err.message }) } else {
             let langAWS
             switch (req.query.language) {
               case 'fr':
@@ -68,10 +66,7 @@ gameController.randomWord = async function (req, res) {
                 break
             }
             AWSService.pronounce(langAWS, wordTranslated, (err, url) => {
-              if (err)
-                res.status(500).json({ error: err.message })
-              else
-                res.status(200).json({ pronunciation: url })
+              if (err) { res.status(500).json({ error: err.message }) } else { res.status(200).json({ pronunciation: url }) }
             })
           }
         })
@@ -100,7 +95,7 @@ gameController.translate = async function (req, res) {
 
 /**
  * return pronunciation of word in a specific language
- * @member translate
+ * @member pronounce
  * @function
  * @param {Object} req - the request
  * @param {Object} res - the response
@@ -118,6 +113,8 @@ gameController.pronounce = async function (req, res) {
 
 /**
  * Permet à l'utilisateur de vérifier s'il a trouvé le bon mot
+ * @member verify
+ * @function
  * @param req
  * @param res
  * @returns {Promise<void>}
@@ -130,18 +127,17 @@ gameController.verify = async function (req, res) {
     undefined,
     {
       sort: {
-        createdAt: -1 //Sort by Date DESC
+        createdAt: -1 // Sort by Date DESC
       }
     },
     (err, question) => {
       console.log(question)
-      if (err)
-        res.status(500).json({ message: err })
+      if (err) { res.status(500).json({ message: err }) }
       if (question.remainingTrial !== -1 && question.remainingTrial <= 0) {
-        res.status(403).json({ 'message': 'Plus d\'essai restant' })
+        res.status(403).json({ message: 'Plus d\'essai restant' })
       }
       if (wordUser === question.wordToFind) {
-        res.status(200).json({ 'message': 'BRAVO' })
+        res.status(200).json({ message: 'BRAVO' })
         // TODO Update pour dire que le mot a été trouvé
       }
       // TODO décrémente le nb d'essai restant
@@ -152,7 +148,7 @@ gameController.validate = method => {
   switch (method) {
     case 'randomWord': {
       return [
-        param('difficulty', 'difficulty missing').exists(),
+        param('difficulty', 'difficulty missing').exists()
       ]
     }
   }
