@@ -33,6 +33,7 @@ router.beforeEach((to, from, next) => {
   const loggedIn = store.state.authentication.user
 
   if (authRequired && !loggedIn) {
+    store.dispatch('notification/error', 'You must be logged in first !')
     return next('/login')
   }
 
