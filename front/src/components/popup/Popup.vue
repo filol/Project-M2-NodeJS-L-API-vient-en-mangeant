@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     snackbarClose () {
-      this.$store.dispatch('notification/clear')
+      this.$store.dispatch('notification/close')
     }
   }
 }

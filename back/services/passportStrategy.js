@@ -6,7 +6,6 @@ const User = require('../models/User')
 const cookieExtractor = function (req) {
   var token = null
   if (req && req.cookies) {
-    console.log('req.cookies: ', req.cookies)
     token = req.cookies.token
   }
   return token
@@ -27,7 +26,6 @@ function hookJWTStrategy (passport) {
   passport.use(
     'connected',
     new JWTStrategy(options, function (JWTPayload, callback) {
-      console.log('JWTPayload: ', JWTPayload)
       User.findOne({ _id: JWTPayload.id }, function (err, user) {
         if (err) {
           return callback(err, false)

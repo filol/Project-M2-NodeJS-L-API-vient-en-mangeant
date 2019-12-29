@@ -4,7 +4,7 @@ export const notification = {
     snackbar: false,
     color: '',
     message: '',
-    timeout: 3000
+    timeout: 5000000
   },
   actions: {
     success ({ commit }, message) {
@@ -19,8 +19,11 @@ export const notification = {
       commit('error', message)
       commit('clear')
     },
-    clear ({ commit }, message) {
+    clear ({ commit }) {
       commit('clear')
+    },
+    close ({ commit }) {
+      commit('close')
     }
   },
   mutations: {
@@ -45,6 +48,11 @@ export const notification = {
         state.color = 'blue'
         state.message = ''
       }, state.timeout)
+    },
+    close (state) {
+      state.snackbar = false
+      state.color = 'blue'
+      state.message = ''
     }
   }
 }

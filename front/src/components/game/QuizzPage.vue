@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import { axiosAPI } from '../../_helpers'
 var AWS = require('aws-sdk/dist/aws-sdk-react-native')
 
 AWS.config.region = 'us-east-1'
@@ -107,8 +107,17 @@ export default {
     },
     generateNewGame () {
       // select a new random word
-      Vue.axios
-        .get('https://random-word-api.herokuapp.com/word?key=9BG04C8Q&number=1')
+      // Vue.axios
+      //   .get('https://random-word-api.herokuapp.com/word?key=9BG04C8Q&number=1')
+      //   .then(response => {
+      //     console.log(response.data)
+      //     this.wordToGuess = response.data[0]
+      //     this.word = ''
+      //     this.loadNewWordAudio()
+      //   })
+
+      axiosAPI
+        .get('/word')
         .then(response => {
           console.log(response.data)
           this.wordToGuess = response.data[0]

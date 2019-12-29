@@ -101,21 +101,6 @@
         </v-col>
       </v-row>
     </v-card>
-
-    <!-- Modifications changed success snackbar -->
-    <v-snackbar v-model="successSnackbar" :vertical="true" :timeout="2000">
-      <v-row align="center" justify="center">
-        <h1>Modifications saved</h1>
-      </v-row>
-      <v-row align="center" justify="center">
-        <v-img
-          src="https://img.pngio.com/validate-input-data-using-validator-in-vapor-20-swiftyjimmy-validate-png-270_270.png"
-          aspect-ratio="1"
-          max-width="100"
-          max-height="100"
-        ></v-img>
-      </v-row>
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -132,8 +117,7 @@ export default {
     dialog: false,
     newPassword: '',
     username: 'Loading ...',
-    email: 'Loading ...',
-    successSnackbar: false
+    email: 'Loading ...'
   }),
   methods: {
     deleteAccount () {
@@ -148,8 +132,8 @@ export default {
     changePassword () {
       axiosAPI
         .post('/users/changePassword', { password: this.newPassword }).then(response => {
-          this.successSnackbar = true
           console.log(response)
+          this.$store.dispatch('notification/success', 'Password changed', { root: true })
         }).catch(err => {
           console.error('err: ', err)
         })
@@ -159,7 +143,7 @@ export default {
         .post('/users/changeDifficulty', { difficulty: this.selectedDifficulty })
         .then(response => {
           console.log(response)
-          this.successSnackbar = true
+          this.$store.dispatch('notification/success', 'Difficulty changed', { root: true })
         })
         .catch(err => {
           console.error('err: ', err)
@@ -172,14 +156,13 @@ export default {
         .post('/users/changeLanguage', { language: this.selectedLanguage })
         .then(response => {
           console.log(response)
-          this.successSnackbar = true
+          this.$store.dispatch('notification/success', 'Language changed', { root: true })
         })
         .catch(err => {
           console.error('err: ', err)
           console.log('error while getting account informations')
         })
     }
-
   },
   created () {
     axiosAPI
