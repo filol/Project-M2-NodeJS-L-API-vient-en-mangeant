@@ -6,6 +6,7 @@ var gameRoutes = function(passport) {
   router.get('/translate', gameController.translate)
   router.get('/pronounce', gameController.pronounce)
   router.post('/verify', gameController.verify)
+  router.get('/answer', gameController.answer)
 
   return router
 }
