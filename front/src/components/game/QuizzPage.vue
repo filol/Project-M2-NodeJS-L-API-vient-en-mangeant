@@ -7,7 +7,7 @@
 
     <v-row no-gutters justify="center" align="center" class="text-center">
       <v-col cols="12">
-        <v-alert type="warning">This page should be restricted to login user in the future !</v-alert>
+        <v-alert type="warning">TODO: link with the back and make this page work</v-alert>
       </v-col>
     </v-row>
     <v-card>
