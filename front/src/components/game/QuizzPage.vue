@@ -134,7 +134,6 @@ export default {
       axiosAPI.get('/game/score').then(response => {
         this.score = response.data.score
         this.gameOver = true
-        alert(`Game over score = ${response.data.score}`)
       })
     }
   }
