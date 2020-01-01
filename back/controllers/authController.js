@@ -320,6 +320,9 @@ authController.changeLanguage = async function (req, res, next) {
         console.log(err)
       }
     )
+
+    req.session.language = newLanguage
+
     res.status(200).json({
       success: true,
       message: 'Language has been successfully changed !'

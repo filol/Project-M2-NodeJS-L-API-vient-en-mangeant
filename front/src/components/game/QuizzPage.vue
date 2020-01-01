@@ -7,10 +7,15 @@
 
     <v-row no-gutters justify="center" align="center" class="text-center">
       <v-col cols=12 sm=10 md=8 lg=6>
-        <v-alert type="warning">TODO: link with the back and make this page work</v-alert>
-
+        <h1>Quizz</h1>
         <v-card>
-          <v-card-text>
+          <template v-if="gameOver">
+            <p>Game over ! Your final score is {{ score }}</p>
+            <v-btn @click="startGame()" large color="green accent-3">Start a new game</v-btn>
+          </template>
+          <template v-else-if="gameStarted">
+            <p> Question {{ questionNumber }}/10 </p>
+            <v-card-text>
             <v-btn @click="play()" color="grey darken-1" fab>
               <v-icon>{{ buttonIcon }}</v-icon>
             </v-btn>
@@ -19,11 +24,22 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn large color='red accent-2'>I don't know</v-btn>
+            <v-btn @click="skipAnswer()" large color='red accent-2'>I don't know</v-btn>
             <v-spacer></v-spacer>
             <v-btn @click="validateAnswer()" large color="green accent-3">Validate</v-btn>
             <v-spacer></v-spacer>
           </v-card-actions>
+          </template>
+          <template v-else>
+            <p>
+              The quizz is a series of 10 questions. For each, try to guess which word was said, write it and click the validate button.<br>
+              Depending on the difficulty, you'll have 2 (hard), 4 (medium) or 6 (easy) trials.<br>
+              If you fail to find the word after those, you'll fail the question !<br>
+              You can skip a word by clicking the 'I don't know button'.<br>
+              As soon as you're ready, hit the start button. Good luck !
+            </p>
+            <v-btn @click="startGame()" large color="green accent-3">Start</v-btn>
+          </template>
         </v-card>
       </v-col>
     </v-row>
@@ -46,9 +62,20 @@ export default {
     buttonIcon: 'mdi-play',
     word: '',
     audioSourceUrl: '',
+    gameStarted: false,
+    gameOver: false,
+    score: 0,
+    questionNumber: 1,
     timeToReadWord: 1500
   }),
   methods: {
+    startGame () {
+      axiosAPI.get('/game/newGame')
+      this.questionNumber = 1
+      this.gameStarted = true
+      this.gameOver = false
+      this.generateNewGame()
+    },
     play () {
       if (this.buttonIcon === 'mdi-play') {
         this.buttonIcon = 'mdi-pause'
@@ -58,26 +85,58 @@ export default {
     endPlaying () {
       this.buttonIcon = 'mdi-play'
     },
+    skipAnswer () {
+      this.questionNumber++
+      this.$store.dispatch('notification/success', 'Too bad ! Onto the next word')
+      this.generateNewGame()
+    },
     validateAnswer () {
       axiosAPI.post('/game/verify', { word: this.word })
         .then(response => {
-          console.log('response: ', response)
+          this.questionNumber++
+          if (response.data.gameOver === true) {
+            this.$store.dispatch('notification/success', 'Game over !')
+            this.endGame()
+          } else {
+            this.$store.dispatch('notification/success', 'Well done ! Onto the next word')
+            this.generateNewGame()
+          }
         }).catch(err => {
-          this.$store.dispatch('notification/error', 'Wrong !')
-          console.log(err)
+          const status = err.response.status
+
+          switch (status) {
+            case 418:
+              this.$store.dispatch('notification/error', 'Wrong answer ! Try again.')
+              break
+            case 403:
+              this.questionNumber++
+              this.$store.dispatch('notification/error', 'Wrong answer ! No more trials')
+              if (err.response.data.gameOver === true) {
+                this.endGame()
+              } else {
+                this.generateNewGame()
+              }
+              break
+          }
         })
     },
     generateNewGame () {
+      this.word = ''
+
       // select a new random word
       axiosAPI.get('/game/randomWord')
         .then(response => {
           this.audioSourceUrl = response.data.pronunciation
           document.getElementById('audioPlayback').load()
         })
+    },
+    endGame () {
+      axiosAPI.get('/game/score').then(response => {
+        this.score = response.data.score
+        this.gameOver = true
+        alert(`Game over score = ${response.data.score}`)
+      })
     }
-  },
-  created () {
-    this.generateNewGame()
   }
 }
 </script>

@@ -13,6 +13,20 @@ const { param } = require('express-validator')
 var gameController = {}
 
 /**
+ * Starts a new game
+ * @member newGame
+ * @function
+ * @param {Object} req - the request
+ * @param {Object} res - the response
+ */
+gameController.newGame = function (req, res) {
+  const { questionsMaxCount } = require('../config/config')
+  req.session.questionsMaxCount = questionsMaxCount
+  req.session.gameScore = 0
+  res.send('Game start')
+}
+
+/**
  *  choose a random english word and give us the prounonciation url
  * @member randomWord
  * @function
@@ -122,6 +136,7 @@ gameController.pronounce = async function (req, res) {
  * @returns {Promise<void>}
  */
 gameController.verify = async function (req, res) {
+  console.log('req.session.questionsMaxCount: ', req.session.questionsMaxCount)
   const idUser = req.session.userId
   const wordUser = req.body.word
 
@@ -138,23 +153,38 @@ gameController.verify = async function (req, res) {
         res.status(500).json({ message: err })
         console.error(err)
       }
+
       if (question.find) {
         res.status(403).json({ message: 'You have already found the last word' })
         return
       }
-      if (question.remainingTrial !== -1 && question.remainingTrial <= 0) {
-        res.status(403).json({ message: 'No more trial remaining' })
-        return
-      }
+
       if (question.remainingTrial !== -1) {
         question.remainingTrial -= 1
       }
+
       if (wordUser === question.wordToFind) {
-        res.status(200).json({ message: 'WELL DONE' })
+        req.session.questionsMaxCount--
+        req.session.gameScore++
+
+        if (req.session.questionsMaxCount <= 0) {
+          res.status(200).json({ message: 'WELL DONE', gameOver: true })
+        } else {
+          res.status(200).json({ message: 'WELL DONE', gameOver: false })
+        }
         question.find = true
+      } else if (question.remainingTrial !== -1 && question.remainingTrial <= 0) {
+        req.session.questionsMaxCount--
+
+        if (req.session.questionsMaxCount <= 0) {
+          res.status(403).json({ message: 'No more trial remaining', gameOver: true })
+        } else {
+          res.status(403).json({ message: 'No more trial remaining', gameOver: false })
+        }
       } else {
         res.status(418).json({ message: 'Nope, it was not this' })
       }
+
       question.save(function (err) {
         if (!err) {
           console.log('question ' + question._id + ' created at ' + question.createdAt + ' updated at ' + question.updatedAt)
@@ -199,6 +229,18 @@ gameController.answer = async function (req, res) {
         })
       }
     })
+}
+
+/**
+ * Retourne le score final
+ * @member score
+ * @function
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
+gameController.score = function (req, res) {
+  res.json({ score: req.session.gameScore })
 }
 
 gameController.validate = method => {

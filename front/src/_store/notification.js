@@ -4,7 +4,7 @@ export const notification = {
     snackbar: false,
     color: '',
     message: '',
-    timeout: 5000
+    timeout: 3000
   },
   actions: {
     success ({ commit }, message) {
