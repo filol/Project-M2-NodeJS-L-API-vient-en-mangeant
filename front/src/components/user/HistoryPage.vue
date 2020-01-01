@@ -22,26 +22,26 @@
 </template>
 
 <script>
-import { axiosAPI } from '../../_helpers'
+  import { axiosAPI } from '../../_helpers'
 
-export default {
-  name: 'Limba',
-  data: () => ({
-    model: 1,
-    items: []
-  }),
-  methods: {
-
-  },
-  created () {
-    axiosAPI
+  export default {
+    name: 'Limba',
+    data: () => ({
+      model: 1,
+      items: []
+    }),
+    methods: {},
+    created () {
+      axiosAPI
       .get('/user/history')
       .then(response => {
         if (response.data.history.length === 0) {
           this.items.push({ text: 'No previous question' })
         } else {
-          var isFound = (response.data.history.find) ? 'Correct answer' : 'Wrong answer'
-          response.data.history.map((elem) => { this.items.push({ text: elem.wordToFind + ' (' + elem.language + ')' + ' - ' + isFound }) })
+          response.data.history.map((elem) => {
+            const isFound = (elem.find) ? 'Correct answer' : 'Wrong answer'
+            this.items.push({ text: elem.wordToFind + ' (' + elem.language + ')' + ' - ' + isFound })
+          })
         }
       })
       .catch(err => {
