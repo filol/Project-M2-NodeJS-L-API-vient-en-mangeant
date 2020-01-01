@@ -4,7 +4,7 @@ const logger = require('../services/logger')
 const gameService = require('../services/gameService')
 const AWSService = require('../services/AWSService')
 
-const { check, param, validationResult } = require('express-validator')
+const { param } = require('express-validator')
 
 /**
  * The game controller
@@ -134,19 +134,19 @@ gameController.verify = async function (req, res) {
         console.error(err)
       }
       if (question.find) {
-        res.status(403).json({ 'message': 'You have already found the last word' })
+        res.status(403).json({ message: 'You have already found the last word' })
       }
       if (question.remainingTrial !== -1 && question.remainingTrial <= 0) {
-        res.status(403).json({ 'message': 'No more trial remaining' })
+        res.status(403).json({ message: 'No more trial remaining' })
       }
       if (question.remainingTrial !== -1) {
         question.remainingTrial -= 1
       }
       if (wordUser === question.wordToFind) {
-        res.status(200).json({ 'message': 'WELL DONE' })
+        res.status(200).json({ message: 'WELL DONE' })
         question.find = true
       } else {
-        res.status(418).json({ 'message': 'Nope, it was not this' })
+        res.status(418).json({ message: 'Nope, it was not this' })
       }
       question.save(function (err) {
         if (!err) {
@@ -178,7 +178,7 @@ gameController.answer = async function (req, res) {
     },
     (err, question) => {
       if (err) { res.status(500).json({ message: err }) }
-      res.status(200).json({ 'word': question.wordToFind })
+      res.status(200).json({ word: question.wordToFind })
       if (question.remainingTrial !== -1) {
         question.remainingTrial = 0
         question.save(function (err) {
