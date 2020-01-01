@@ -51,6 +51,9 @@ authController.register = async function (req, res) {
       // Save user info in session & cookies
       req.session.userId = user._id
       req.session.username = user.username
+      req.session.email = user.email
+      req.session.language = user.language
+      req.session.difficulty = user.difficulty
       res.cookie('token', token)
       res.cookie('username', user.username)
 
@@ -199,6 +202,12 @@ authController.account = async function (req, res, next) {
   if (req.session.userId) {
     const user = await User.findOne({ _id: req.session.userId })
     if (user) {
+      req.session.userId = user._id
+      req.session.username = user.username
+      req.session.email = user.email
+      req.session.language = user.language
+      req.session.difficulty = user.difficulty
+
       res.status(200).json({
         success: true,
         user: {
@@ -275,6 +284,9 @@ authController.changeDifficulty = async function (req, res, next) {
         console.log(err)
       }
     )
+
+    req.session.difficulty = user.difficulty
+
     res.status(200).json({
       success: true,
       message: 'Difficulty has been successfully changed !'

@@ -26,29 +26,31 @@ gameController.randomWord = async function (req, res) {
   const randomWord = gameService.getRandomWord()
   console.log('random word : ', randomWord)
 
-  gameService.getRemainingTrial(req.query.difficulty, (err, remainingTrial) => {
+  gameService.getRemainingTrial(req.session.difficulty, (err, remainingTrial) => {
     if (err) {
       res.status(422).json({ error: 'La difficulté doit être easy, medium, hard ou sandbox' })
     }
-    // On créé un enregistrement en bdd
+
+    // On crée un enregistrement en bdd
     const questionData = {
       idUser: req.session.userId,
-      wordToFind: randomWord,
       remainingTrial: remainingTrial,
-      difficulty: req.query.difficulty,
-      language: req.query.language
+      difficulty: req.session.difficulty,
+      language: req.session.language
     }
 
-    Question.create(questionData, (err, question) => {
-      if (err) {
-        logger.error(err)
-        res.status(500).json({ error: err.message })
-      } else {
-        AWSService.translate(req.query.language, randomWord, (err, wordTranslated) => {
-          console.log('wordtranslated', wordTranslated)
-          if (err) { res.status(500).json({ error: err.message }) } else {
+    AWSService.translate(req.session.language, randomWord, (err, wordTranslated) => {
+      console.log('wordtranslated', wordTranslated)
+      if (err) { res.status(500).json({ error: err.message }) } else {
+        questionData.wordToFind = wordTranslated
+
+        Question.create(questionData, (err, question) => {
+          if (err) {
+            logger.error(err)
+            res.status(500).json({ error: err.message })
+          } else {
             let langAWS
-            switch (req.query.language) {
+            switch (req.session.language) {
               case 'fr':
                 langAWS = 'fr-FR'
                 break
@@ -65,8 +67,10 @@ gameController.randomWord = async function (req, res) {
                 langAWS = 'en-US'
                 break
             }
+            console.log('langAWS: ', langAWS)
             AWSService.pronounce(langAWS, wordTranslated, (err, url) => {
-              if (err) { res.status(500).json({ error: err.message }) } else { res.status(200).json({ pronunciation: url }) }
+              if (err) res.status(500).json({ error: err.message })
+              else res.status(200).json({ pronunciation: url })
             })
           }
         })
@@ -120,6 +124,7 @@ gameController.pronounce = async function (req, res) {
 gameController.verify = async function (req, res) {
   const idUser = req.session.userId
   const wordUser = req.body.word
+
   Question.findOne(
     { idUser: idUser },
     undefined,
@@ -135,9 +140,11 @@ gameController.verify = async function (req, res) {
       }
       if (question.find) {
         res.status(403).json({ message: 'You have already found the last word' })
+        return
       }
       if (question.remainingTrial !== -1 && question.remainingTrial <= 0) {
         res.status(403).json({ message: 'No more trial remaining' })
+        return
       }
       if (question.remainingTrial !== -1) {
         question.remainingTrial -= 1

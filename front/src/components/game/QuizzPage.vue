@@ -2,7 +2,7 @@
   <v-container>
     <!-- invisible audio player -->
     <audio id="audioPlayback" @ended="endPlaying()" style="display:none;" controls>
-      <source id="audioSource" type="audio/mp3" src />
+      <source id="audioSource" type="audio/mp3" :src="audioSourceUrl" />
     </audio>
 
     <v-row no-gutters justify="center" align="center" class="text-center">
@@ -31,7 +31,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
+// import Vue from 'vue'
+import { axiosAPI } from '../../_helpers'
 var AWS = require('aws-sdk/dist/aws-sdk-react-native')
 
 AWS.config.region = 'us-east-1'
@@ -43,8 +44,8 @@ export default {
   name: 'App',
   data: () => ({
     buttonIcon: 'mdi-play',
-    wordToGuess: '',
     word: '',
+    audioSourceUrl: '',
     timeToReadWord: 1500
   }),
   methods: {
@@ -58,49 +59,20 @@ export default {
       this.buttonIcon = 'mdi-play'
     },
     validateAnswer () {
-      console.log(this.word)
-      if (this.word === this.wordToGuess) {
-        alert('YOU WON !')
-      } else {
-        alert('You lost :( the word was: ' + this.wordToGuess)
-      }
-      this.generateNewGame()
-    },
-
-    loadNewWordAudio () {
-      // Create the JSON parameters for getSynthesizeSpeechUrl
-      var speechParams = {
-        OutputFormat: 'mp3',
-        SampleRate: '16000',
-        Text: '',
-        TextType: 'text',
-        VoiceId: 'Matthew'
-      }
-      speechParams.Text = this.wordToGuess
-
-      // Create the Polly service object and presigner object
-      var polly = new AWS.Polly({ apiVersion: '2016-06-10' })
-      var signer = new AWS.Polly.Presigner(speechParams, polly)
-
-      // Create presigned URL of synthesized speech file
-      signer.getSynthesizeSpeechUrl(speechParams, function (error, url) {
-        if (error) {
-          console.log(error)
-        } else {
-          document.getElementById('audioSource').src = url
-          document.getElementById('audioPlayback').load()
-        }
-      })
+      axiosAPI.post('/game/verify', { word: this.word })
+        .then(response => {
+          console.log('response: ', response)
+        }).catch(err => {
+          this.$store.dispatch('notification/error', 'Wrong !')
+          console.log(err)
+        })
     },
     generateNewGame () {
       // select a new random word
-      Vue.axios
-        .get('https://random-word-api.herokuapp.com/word?key=9BG04C8Q&number=1')
+      axiosAPI.get('/game/randomWord')
         .then(response => {
-          console.log(response.data)
-          this.wordToGuess = response.data[0]
-          this.word = ''
-          this.loadNewWordAudio()
+          this.audioSourceUrl = response.data.pronunciation
+          document.getElementById('audioPlayback').load()
         })
     }
   },
