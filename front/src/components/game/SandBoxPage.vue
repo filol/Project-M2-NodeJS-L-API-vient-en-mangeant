@@ -37,53 +37,39 @@
       <source id="audioSource" type="audio/mp3" src />
     </audio>
 
-    <!-- Game instructions -->
     <v-row no-gutters justify="center" align="center" class="text-center">
-      <v-col cols="12">
+      <v-col cols=12 sm=10 md=8 lg=6>
+        <!-- Game instructions -->
         <h1>Sandbox</h1>
-        <p>A random word is chosen and you have to guess what this word is by hearing</p>
+        <p>A random word is chosen and you have to guess the word by hearing it</p>
+
+        <v-card>
+          <v-card-text>
+            <v-row>
+              <v-col cols=6 sm=4 lg=3>
+                <v-select
+                  v-on:change="generateNewGame"
+                  v-model="selectedLanguage"
+                  :items="languageIds"
+                  label="Choose your language"
+                ></v-select>
+              </v-col>
+            </v-row>
+
+              <!-- Play button -->
+              <v-btn v-on:click="play()" fab color='grey darken-1'>
+                <v-icon>{{ buttonIcon }}</v-icon>
+              </v-btn>
+
+              <!-- User text input -->
+              <v-text-field @keyup.enter="validateAnswer()" class="my-4" type="text" v-model="word" label="Your guess" outlined shaped></v-text-field>
+
+              <!-- Validate button -->
+              <v-btn @click="validateAnswer()" large color="green accent-3">Validate</v-btn>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
-    <v-card>
-      <v-row no-gutters justify="center" align="center" class="text-center">
-        <v-col class="d-flex" cols="12" sm="2">
-          <v-select
-            v-on:change="generateNewGame"
-            v-model="selectedLanguage"
-            :items="lanuageIds"
-            label="en-US"
-            solo
-          ></v-select>
-        </v-col>
-      </v-row>
-
-      <!-- Play button -->
-      <v-row no-gutters justify="center" align="center" class="text-center">
-        <v-col cols="12" class="mt-3">
-          <v-btn v-on:click="play()" fab>
-            <v-icon>{{ buttonIcon }}</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-
-      <!-- User text input -->
-      <v-row no-gutters justify="center" align="center">
-        <v-col cols="12" sm="8" md="8" lg="4">
-          <v-card-text>
-            <v-text-field type="text" v-model="word" label="Your guess" outlined shaped></v-text-field>
-          </v-card-text>
-        </v-col>
-      </v-row>
-
-      <!-- Validate button -->
-      <v-row no-gutters justify="center" align="center">
-        <v-col cols="12" justify="center" align="center">
-          <div class="my-2">
-            <v-btn v-on:click="validateAnswer()" large color="primary">Validate</v-btn>
-          </div>
-        </v-col>
-      </v-row>
-    </v-card>
   </v-container>
 </template>
 
@@ -102,7 +88,7 @@ var translate = new AWS.Translate({ apiVersion: '2017-07-01' })
 export default {
   name: 'App',
   data: () => ({
-    lanuageIds: ['fr-FR', 'es-ES', 'it-IT', 'de-DE', 'en-US'],
+    languageIds: ['fr-FR', 'es-ES', 'it-IT', 'de-DE', 'en-US'],
     voiceIds: ['Mathieu', 'Enrique', 'Giorgio', 'Hans', 'Matthew'],
     buttonIcon: 'mdi-play',
     wordToGuess: '',
@@ -148,7 +134,7 @@ export default {
         Text: '',
         TextType: 'text',
         LanguageCode: this.selectedLanguage,
-        VoiceId: this.voiceIds[this.lanuageIds.indexOf(this.selectedLanguage)]
+        VoiceId: this.voiceIds[this.languageIds.indexOf(this.selectedLanguage)]
       }
       speechParams.Text = this.wordToGuess
 
