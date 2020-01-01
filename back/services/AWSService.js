@@ -4,7 +4,7 @@ var AWSService = {}
 var AWS = require('aws-sdk')
 AWS.config.region = 'us-east-1'
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: 'us-east-1:d5beba94-b05a-49ce-b90c-a2c2ad452e44',
+  IdentityPoolId: 'us-east-1:d5beba94-b05a-49ce-b90c-a2c2ad452e44'
 })
 
 AWSService.translate = function (language, word, next) {
@@ -12,7 +12,7 @@ AWSService.translate = function (language, word, next) {
   var params = {
     SourceLanguageCode: 'en' /* required */,
     TargetLanguageCode: language /* required */,
-    Text: word /* required */,
+    Text: word /* required */
   }
 
   translate.translateText(params, function (err, data) {
@@ -37,7 +37,7 @@ AWSService.pronounce = function (language, word, next) {
     Text: '',
     TextType: 'text',
     LanguageCode: language, // language code (eg. 'it-IT') passed as GET param
-    VoiceId: voiceIds[lanuageIds.indexOf(language)], // auto selection of voice for this language code
+    VoiceId: voiceIds[lanuageIds.indexOf(language)] // auto selection of voice for this language code
   }
   // word to pronounce
   speechParams.Text = word

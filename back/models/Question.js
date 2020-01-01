@@ -5,7 +5,7 @@ const QuestionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     index: true,
     required: true,
-    auto: true,
+    auto: true
   },
   createdAt: {
     type: Date,
@@ -39,7 +39,7 @@ const QuestionSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true
-  },
+  }
 })
 
 const Question = mongoose.model('Question', QuestionSchema)

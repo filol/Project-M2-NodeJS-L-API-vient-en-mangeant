@@ -18,7 +18,7 @@ var authController = {}
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.register = async function(req, res) {
+authController.register = async function (req, res) {
   try {
     const errors = validationResult(req) // Finds the validation errors in this request and wraps them in an object with handy functions
 
@@ -35,7 +35,7 @@ authController.register = async function(req, res) {
   const userData = {
     username: req.body.username,
     password: req.body.password,
-    email: req.body.email,
+    email: req.body.email
   }
 
   User.create(userData, (err, user) => {
@@ -45,7 +45,7 @@ authController.register = async function(req, res) {
     } else {
       // Create the JWT token for the passport JWT authentication
       const token = jwt.sign({ id: user._id }, keys.secretJWT, {
-        expiresIn: '30m',
+        expiresIn: '30m'
       })
 
       // Save user info in session & cookies
@@ -66,7 +66,7 @@ authController.register = async function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.login = async function(req, res) {
+authController.login = async function (req, res) {
   try {
     const errors = validationResult(req) // Finds the validation errors in this request and wraps them in an object with handy functions
 
@@ -84,7 +84,7 @@ authController.login = async function(req, res) {
         // Create token here
         // Create the JWT token for the passport JWT authentication
         const token = jwt.sign({ id: user._id }, keys.secretJWT, {
-          expiresIn: '30m',
+          expiresIn: '30m'
         })
         // Save user info in session
         req.session.userId = user._id
@@ -119,8 +119,8 @@ authController.login = async function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-authController.logout = async function(req, res, next) {
-  req.session.regenerate(function(err) {
+authController.logout = async function (req, res, next) {
+  req.session.regenerate(function (err) {
     if (err) {
       next(err)
     } else {
@@ -138,13 +138,13 @@ authController.validate = method => {
         check('username', 'Username missing').exists(),
         check('password', 'Password missing').exists(),
         check('email', 'Email missing').exists(),
-        check('email', 'Email format wrong').isEmail(),
+        check('email', 'Email format wrong').isEmail()
       ]
     }
     case 'login': {
       return [
         check('username', 'Username missing').exists(),
-        check('password', 'Password missing').exists(),
+        check('password', 'Password missing').exists()
       ]
     }
   }
@@ -158,14 +158,14 @@ authController.validate = method => {
  * @param {Object} res - the response
  */
 
-authController.delete = async function(req, res, next) {
+authController.delete = async function (req, res, next) {
   const user = await User.findOne({ username: req.session.username })
   if (user) {
-    User.findOneAndDelete({ _id: req.session.userId }, function(err) {
+    User.findOneAndDelete({ _id: req.session.userId }, function (err) {
       if (err) {
         console.log(err)
       } else {
-        req.session.regenerate(function(err) {
+        req.session.regenerate(function (err) {
           if (err) {
             next(err)
           } else {
@@ -182,7 +182,7 @@ authController.delete = async function(req, res, next) {
     res.status(401).json({
       success: false,
       message:
-        'An unexpected error occured while trying to remove the account !',
+        'An unexpected error occured while trying to remove the account !'
     })
   }
 }
@@ -195,7 +195,7 @@ authController.delete = async function(req, res, next) {
  * @param {Object} res - the response
  */
 
-authController.account = async function(req, res, next) {
+authController.account = async function (req, res, next) {
   if (req.session.userId) {
     const user = await User.findOne({ _id: req.session.userId })
     if (user) {
@@ -205,8 +205,8 @@ authController.account = async function(req, res, next) {
           username: req.session.username,
           email: req.session.email,
           language: user.language,
-          difficulty: user.difficulty,
-        },
+          difficulty: user.difficulty
+        }
       })
     } else {
       res
@@ -224,39 +224,39 @@ authController.account = async function(req, res, next) {
  * @param {Object} res - the response
  */
 
-authController.changePassword = async function(req, res, next) {
+authController.changePassword = async function (req, res, next) {
   const newPassword = req.body.password
 
   const user = await User.findOne({ _id: req.session.userId })
   if (user && newPassword.length > 2 && newPassword.length < 400) {
-    bcrypt.hash(newPassword, 10, function(err, hash) {
+    bcrypt.hash(newPassword, 10, function (err, hash) {
       if (err) {
         console.log(err)
       } else {
         User.update(
           { _id: req.session.userId },
           {
-            password: hash,
+            password: hash
           },
-          function(err) {
+          function (err) {
             console.log(err)
           }
         )
         res.status(200).json({
           success: true,
-          message: 'Password has been succesfully modified !',
+          message: 'Password has been succesfully modified !'
         })
       }
     })
   } else {
     res.status(401).json({
       success: false,
-      message: 'Error. The password length or current session is wrong',
+      message: 'Error. The password length or current session is wrong'
     })
   }
 }
 
-authController.changeDifficulty = async function(req, res, next) {
+authController.changeDifficulty = async function (req, res, next) {
   const newDifficulty = req.body.difficulty
 
   const user = await User.findOne({ _id: req.session.userId })
@@ -269,25 +269,25 @@ authController.changeDifficulty = async function(req, res, next) {
     User.updateOne(
       { _id: req.session.userId },
       {
-        difficulty: newDifficulty,
+        difficulty: newDifficulty
       },
-      function(err) {
+      function (err) {
         console.log(err)
       }
     )
     res.status(200).json({
       success: true,
-      message: 'Difficulty has been successfully changed !',
+      message: 'Difficulty has been successfully changed !'
     })
   } else {
     res.status(401).json({
       success: false,
-      message: 'Error. The session and/or new difficulty is wrong',
+      message: 'Error. The session and/or new difficulty is wrong'
     })
   }
 }
 
-authController.changeLanguage = async function(req, res, next) {
+authController.changeLanguage = async function (req, res, next) {
   const newLanguage = req.body.language
 
   const user = await User.findOne({ _id: req.session.userId })
@@ -302,20 +302,20 @@ authController.changeLanguage = async function(req, res, next) {
     User.updateOne(
       { _id: req.session.userId },
       {
-        language: newLanguage,
+        language: newLanguage
       },
-      function(err) {
+      function (err) {
         console.log(err)
       }
     )
     res.status(200).json({
       success: true,
-      message: 'Language has been successfully changed !',
+      message: 'Language has been successfully changed !'
     })
   } else {
     res.status(401).json({
       success: false,
-      message: 'Error. The session and/or new difficulty is wrong',
+      message: 'Error. The session and/or new difficulty is wrong'
     })
   }
 }

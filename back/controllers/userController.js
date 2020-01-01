@@ -9,7 +9,7 @@ userController.history = async function (req, res) {
     undefined,
     {
       sort: {
-        createdAt: -1 //Sort by Date DESC
+        createdAt: -1 // Sort by Date DESC
       }
     },
     (err, questions) => {

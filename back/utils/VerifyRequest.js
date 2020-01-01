@@ -14,9 +14,7 @@ utilsReq.verify = function (req) {
   } catch (err) {
     logger.error(err)
     res.status(500).json({ error: err })
-    return
   }
 }
 
 module.exports = utilsReq
-
