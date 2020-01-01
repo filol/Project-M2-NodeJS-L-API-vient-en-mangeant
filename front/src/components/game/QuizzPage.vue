@@ -6,40 +6,27 @@
     </audio>
 
     <v-row no-gutters justify="center" align="center" class="text-center">
-      <v-col cols="12">
-        <v-alert type="warning">This page should be restricted to login user in the future !</v-alert>
+      <v-col cols=12 sm=10 md=8 lg=6>
+        <v-alert type="warning">TODO: link with the back and make this page work</v-alert>
+
+        <v-card>
+          <v-card-text>
+            <v-btn @click="play()" color="grey darken-1" fab>
+              <v-icon>{{ buttonIcon }}</v-icon>
+            </v-btn>
+
+            <v-text-field class="mt-4" type="text" @keyup.enter="validateAnswer()" v-model="word" label="Your guess" outlined shaped></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn large color='red accent-2'>I don't know</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn @click="validateAnswer()" large color="green accent-3">Validate</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
       </v-col>
     </v-row>
-    <v-card>
-      <v-row no-gutters justify="center" align="center" class="text-center">
-        <v-col cols="12" class="mt-3">
-          <v-btn v-on:click="play()" fab>
-            <v-icon>{{ buttonIcon }}</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-
-      <v-row no-gutters justify="center" align="center">
-        <v-col cols="12" sm="8" md="8" lg="4">
-          <v-card-text>
-            <v-text-field type="text" v-model="word" label="Your guess" outlined shaped></v-text-field>
-          </v-card-text>
-        </v-col>
-      </v-row>
-
-      <v-row no-gutters justify="center" align="center">
-        <v-col cols="6" sm="6" md="6" lg="6" align="right">
-          <div class="my-2">
-            <v-btn large>I don't know</v-btn>
-          </div>
-        </v-col>
-        <v-col cols="6" sm="6" md="6" lg="6">
-          <div class="my-2">
-            <v-btn v-on:click="validateAnswer()" large color="primary">Validate2</v-btn>
-          </div>
-        </v-col>
-      </v-row>
-    </v-card>
   </v-container>
 </template>
 
@@ -73,9 +60,9 @@ export default {
     validateAnswer () {
       console.log(this.word)
       if (this.word === this.wordToGuess) {
-        alert('GAGNE !')
+        alert('YOU WON !')
       } else {
-        alert('PERDU ! the word was: ' + this.wordToGuess)
+        alert('You lost :( the word was: ' + this.wordToGuess)
       }
       this.generateNewGame()
     },
