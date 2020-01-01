@@ -21,6 +21,9 @@ export const notification = {
     },
     clear ({ commit }, message) {
       commit('clear')
+    },
+    close ({ commit }) {
+      commit('close')
     }
   },
   mutations: {
@@ -45,6 +48,11 @@ export const notification = {
         state.color = 'blue'
         state.message = ''
       }, state.timeout)
+    },
+    close (state) {
+      state.snackbar = false
+      state.color = 'blue'
+      state.message = ''
     }
   }
 }
