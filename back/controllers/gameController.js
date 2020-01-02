@@ -265,18 +265,6 @@ gameController.answer = async function (req, res) {
     (err, question) => {
       if (err) { res.status(500).json({ message: err }) }
       res.status(200).json({ word: question.wordToFind })
-      if (question.remainingTrial !== -1) {
-        question.remainingTrial = 0
-        question.save(function (err) {
-          if (!err) {
-            console.log('question ' + question._id + ' created at ' + question.createdAt + ' updated at ' + question.updatedAt)
-          } else {
-            console.log('Error: could not save question ' + question._id)
-            console.error(err)
-            res.status(500).json({ message: err })
-          }
-        })
-      }
     })
 }
 
