@@ -226,7 +226,6 @@ gameController.skip = async function (req, res) {
       }
 
       req.session.questionsMaxCount--
-      question.find = true
 
       if (req.session.questionsMaxCount <= 0) {
         res.status(200).json({ message: 'WORD SKIPPED', gameOver: true })
