@@ -14,7 +14,10 @@
             <v-btn @click="startGame()" large color="green accent-3">Start a new game</v-btn>
           </v-card-text>
           <template v-else-if="gameStarted">
-            <p> Question {{ questionNumber }}/10 </p>
+            <v-card-title>
+              Question {{ questionNumber }}/10<br>
+              Trials left: {{ trialLeft }}
+            </v-card-title>
             <v-card-text>
             <v-btn @click="play()" color="grey darken-1" fab>
               <v-icon>{{ buttonIcon }}</v-icon>
@@ -30,13 +33,17 @@
               <v-spacer></v-spacer>
             </v-card-actions>
           </template>
-          <v-card-text v-else>
+          <v-card-text v-else class="body-1">
             <p>
               The quizz is a series of 10 questions. For each, try to guess which word was said, write it and click the validate button.<br>
               Depending on the difficulty, you'll have 2 (hard), 4 (medium) or 6 (easy) trials.<br>
               If you fail to find the word after those, you'll fail the question !<br>
               You can skip a word by clicking the 'I don't know button'.<br>
               As soon as you're ready, hit the start button. Good luck !
+            </p>
+            <p>
+              Your difficulty is:  <strong>{{ selectedDifficulty }}</strong><br>
+              Your language is: <strong>{{ selectedLanguage }}</strong>
             </p>
             <v-btn @click="startGame()" large color="green accent-3">Start</v-btn>
           </v-card-text>
@@ -66,14 +73,47 @@ export default {
     gameOver: false,
     score: 0,
     questionNumber: 1,
-    timeToReadWord: 5000
+    timeToReadWord: 5000,
+    selectedDifficulty: '',
+    selectedLanguage: '',
+    trialLeft: 0,
+    trial: 0,
+    wordList: []
   }),
+  created () {
+    axiosAPI
+      .get('/users/account')
+      .then(response => {
+        this.selectedDifficulty = response.data.user.difficulty
+        this.selectedLanguage = response.data.user.language
+
+        switch (this.selectedDifficulty) {
+          // 'easy', 'medium', 'hard'
+          case 'easy':
+            this.trial = 6
+            break
+
+          case 'medium':
+            this.trial = 4
+            break
+
+          case 'hard':
+            this.trial = 2
+            break
+        }
+      })
+      .catch(err => {
+        console.error('err: ', err)
+        console.log('error while getting account informations')
+      })
+  },
   methods: {
     startGame () {
       axiosAPI.get('/game/newGame')
       this.questionNumber = 1
       this.gameStarted = true
       this.gameOver = false
+      this.trialLeft = this.trial
       this.generateNewGame()
     },
     play () {
@@ -89,6 +129,7 @@ export default {
       axiosAPI.get('/game/skip')
         .then(response => {
           this.questionNumber++
+          this.trialLeft = this.trial
           if (response.data.gameOver === true) {
             this.$store.dispatch('notification/success', 'Game over !')
             this.endGame()
@@ -106,6 +147,7 @@ export default {
             this.$store.dispatch('notification/success', 'Game over !')
             this.endGame()
           } else {
+            this.trialLeft = this.trial
             this.$store.dispatch('notification/success', 'Well done ! Onto the next word')
             this.generateNewGame()
           }
@@ -114,10 +156,12 @@ export default {
 
           switch (status) {
             case 418:
+              this.trialLeft--
               this.$store.dispatch('notification/error', 'Wrong answer ! Try again.')
               break
             case 403:
               this.questionNumber++
+              this.trialLeft = this.trial
               this.$store.dispatch('notification/error', 'Wrong answer ! No more trials')
               if (err.response.data.gameOver === true) {
                 this.endGame()
@@ -130,6 +174,7 @@ export default {
     },
     generateNewGame () {
       this.word = ''
+      this.trialLeft = this.trial
 
       // select a new random word
       axiosAPI.get('/game/randomWord')
