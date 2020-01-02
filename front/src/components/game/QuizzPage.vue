@@ -10,13 +10,17 @@
         <h1>Quizz</h1>
         <v-card>
           <v-card-text v-if="gameOver">
-            <p>Game over ! Your final score is {{ score }}</p>
+            <p class="title">Game is over ! Your final score is <strong>{{ score }}</strong></p>
+            <p class="body-1">
+              Words to guess (from first to last):<br>
+              <span v-for="item in wordList" :key="item.index">{{ item }}<br></span>
+            </p>
             <v-btn @click="startGame()" large color="green accent-3">Start a new game</v-btn>
           </v-card-text>
           <template v-else-if="gameStarted">
             <v-card-title>
               Question {{ questionNumber }}/10<br>
-              Trials left: {{ trialLeft }}
+              Trials left: {{ trialLeft }}<br>
             </v-card-title>
             <v-card-text>
             <v-btn @click="play()" color="grey darken-1" fab>
@@ -130,6 +134,7 @@ export default {
         .then(response => {
           this.questionNumber++
           this.trialLeft = this.trial
+          this.getAnswer()
           if (response.data.gameOver === true) {
             this.$store.dispatch('notification/success', 'Game over !')
             this.endGame()
@@ -145,10 +150,12 @@ export default {
           this.questionNumber++
           if (response.data.gameOver === true) {
             this.$store.dispatch('notification/success', 'Game over !')
+            this.getAnswer()
             this.endGame()
           } else {
             this.trialLeft = this.trial
             this.$store.dispatch('notification/success', 'Well done ! Onto the next word')
+            this.getAnswer()
             this.generateNewGame()
           }
         }).catch(err => {
@@ -163,6 +170,7 @@ export default {
               this.questionNumber++
               this.trialLeft = this.trial
               this.$store.dispatch('notification/error', 'Wrong answer ! No more trials')
+              this.getAnswer()
               if (err.response.data.gameOver === true) {
                 this.endGame()
               } else {
@@ -170,6 +178,12 @@ export default {
               }
               break
           }
+        })
+    },
+    getAnswer () {
+      axiosAPI.get('/game/answer')
+        .then(response => {
+          this.wordList.push(response.data.word)
         })
     },
     generateNewGame () {
