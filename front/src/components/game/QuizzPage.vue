@@ -9,10 +9,10 @@
       <v-col cols=12 sm=10 md=8 lg=6>
         <h1>Quizz</h1>
         <v-card>
-          <template v-if="gameOver">
+          <v-card-text v-if="gameOver">
             <p>Game over ! Your final score is {{ score }}</p>
             <v-btn @click="startGame()" large color="green accent-3">Start a new game</v-btn>
-          </template>
+          </v-card-text>
           <template v-else-if="gameStarted">
             <p> Question {{ questionNumber }}/10 </p>
             <v-card-text>
@@ -21,16 +21,16 @@
             </v-btn>
 
             <v-text-field class="mt-4" type="text" @keyup.enter="validateAnswer()" v-model="word" label="Your guess" outlined shaped></v-text-field>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn @click="skipAnswer()" large color='red accent-2'>I don't know</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn @click="validateAnswer()" large color="green accent-3">Validate</v-btn>
-            <v-spacer></v-spacer>
-          </v-card-actions>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn @click="skipAnswer()" large color='red accent-2'>I don't know</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn @click="validateAnswer()" large color="green accent-3">Validate</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
           </template>
-          <template v-else>
+          <v-card-text v-else>
             <p>
               The quizz is a series of 10 questions. For each, try to guess which word was said, write it and click the validate button.<br>
               Depending on the difficulty, you'll have 2 (hard), 4 (medium) or 6 (easy) trials.<br>
@@ -39,7 +39,7 @@
               As soon as you're ready, hit the start button. Good luck !
             </p>
             <v-btn @click="startGame()" large color="green accent-3">Start</v-btn>
-          </template>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -66,7 +66,7 @@ export default {
     gameOver: false,
     score: 0,
     questionNumber: 1,
-    timeToReadWord: 1500
+    timeToReadWord: 5000
   }),
   methods: {
     startGame () {
@@ -86,9 +86,17 @@ export default {
       this.buttonIcon = 'mdi-play'
     },
     skipAnswer () {
-      this.questionNumber++
-      this.$store.dispatch('notification/success', 'Too bad ! Onto the next word')
-      this.generateNewGame()
+      axiosAPI.get('/game/skip')
+        .then(response => {
+          this.questionNumber++
+          if (response.data.gameOver === true) {
+            this.$store.dispatch('notification/success', 'Game over !')
+            this.endGame()
+          } else {
+            this.$store.dispatch('notification/success', 'You\'ll do better next time')
+            this.generateNewGame()
+          }
+        })
     },
     validateAnswer () {
       axiosAPI.post('/game/verify', { word: this.word })
