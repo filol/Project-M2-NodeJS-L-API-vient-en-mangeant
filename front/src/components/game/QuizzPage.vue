@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <!-- Loading overlay animation -->
+    <v-overlay :value="overlay">
+      <v-progress-circular class :size="100" :width="7" color="green" indeterminate></v-progress-circular>
+    </v-overlay>
+
     <!-- invisible audio player -->
     <audio id="audioPlayback" @ended="endPlaying()" style="display:none;" controls>
       <source id="audioSource" type="audio/mp3" :src="audioSourceUrl" />
@@ -71,6 +76,7 @@ export default {
   name: 'App',
   data: () => ({
     buttonIcon: 'mdi-play',
+    overlay: false,
     word: '',
     audioSourceUrl: '',
     gameStarted: false,
@@ -113,12 +119,12 @@ export default {
   },
   methods: {
     startGame () {
+      this.generateNewGame()
       axiosAPI.get('/game/newGame')
       this.questionNumber = 1
       this.gameStarted = true
       this.gameOver = false
       this.trialLeft = this.trial
-      this.generateNewGame()
     },
     play () {
       if (this.buttonIcon === 'mdi-play') {
@@ -187,6 +193,7 @@ export default {
         })
     },
     generateNewGame () {
+      this.overlay = true
       this.word = ''
       this.trialLeft = this.trial
 
@@ -195,6 +202,7 @@ export default {
         .then(response => {
           this.audioSourceUrl = response.data.pronunciation
           document.getElementById('audioPlayback').load()
+          this.overlay = false
         })
     },
     endGame () {
