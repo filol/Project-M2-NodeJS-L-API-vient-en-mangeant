@@ -1,7 +1,7 @@
 const app = require('./app')
 const http = require('http')
 
-const port = 5000 || process.env.API_PORT
+const port = process.env.PORT || 5000
 app.set('port', port)
 
 /**
