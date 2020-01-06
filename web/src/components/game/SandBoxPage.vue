@@ -38,7 +38,7 @@
     </audio>
 
     <v-row no-gutters justify="center" align="center" class="text-center">
-      <v-col cols=12 sm=10 md=8 lg=6>
+      <v-col cols="12" sm="10" md="8" lg="6">
         <!-- Game instructions -->
         <h1>Sandbox</h1>
         <p>A random word is chosen and you have to guess the word by hearing it</p>
@@ -46,7 +46,7 @@
         <v-card>
           <v-card-text>
             <v-row>
-              <v-col cols=6 sm=4 lg=3>
+              <v-col cols="6" sm="4" lg="3">
                 <v-select
                   v-on:change="generateNewGame"
                   v-model="selectedLanguage"
@@ -56,16 +56,24 @@
               </v-col>
             </v-row>
 
-              <!-- Play button -->
-              <v-btn v-on:click="play()" fab color='grey darken-1'>
-                <v-icon>{{ buttonIcon }}</v-icon>
-              </v-btn>
+            <!-- Play button -->
+            <v-btn v-on:click="play()" fab color="grey darken-1">
+              <v-icon>{{ buttonIcon }}</v-icon>
+            </v-btn>
 
-              <!-- User text input -->
-              <v-text-field @keyup.enter="validateAnswer()" class="my-4" type="text" v-model="word" label="Your guess" outlined shaped></v-text-field>
+            <!-- User text input -->
+            <v-text-field
+              @keyup.enter="validateAnswer()"
+              class="my-4"
+              type="text"
+              v-model="word"
+              label="Your guess"
+              outlined
+              shaped
+            ></v-text-field>
 
-              <!-- Validate button -->
-              <v-btn @click="validateAnswer()" large color="green accent-3">Validate</v-btn>
+            <!-- Validate button -->
+            <v-btn @click="validateAnswer()" large color="green accent-3">Validate</v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -116,7 +124,7 @@ export default {
     // Validate an answer, display if good or wrong and generate next game
     validateAnswer () {
       this.previousWord = this.wordToGuess
-      if (this.word === this.wordToGuess) {
+      if (this.word.toLowerCase() === this.wordToGuess.toLowerCase()) {
         this.correctSnackbar = true
       } else {
         this.wrongSnackbar = true
