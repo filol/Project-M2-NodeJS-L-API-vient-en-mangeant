@@ -14,12 +14,11 @@ export const authentication = {
   actions: {
     login ({ dispatch, commit }, { username, password }) {
       commit('loginRequest', { username })
-      // dispatch('notification/info', 'Logging in ...', { root: true })
 
       authService.login(username, password)
         .then(
           response => {
-            commit('loginSuccess', response.data.user)
+            commit('loginSuccess', { username: username })
             dispatch('notification/success', 'Successful login', { root: true })
             router.push('/')
           }
@@ -34,7 +33,7 @@ export const authentication = {
       authService.register(username, email, password)
         .then(
           response => {
-            commit('loginSuccess', response.data.user)
+            commit('loginSuccess', { username: username })
             dispatch('notification/success', 'Successful registration', { root: true })
             router.push('/')
           }
