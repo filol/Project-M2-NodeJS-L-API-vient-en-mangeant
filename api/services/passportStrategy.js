@@ -26,7 +26,6 @@ function hookJWTStrategy (passport) {
   passport.use(
     'connected',
     new JWTStrategy(options, function (JWTPayload, callback) {
-      console.log('JWTPayload: ', JWTPayload)
       User.findOne({ _id: JWTPayload.id }, function (err, user) {
         if (err) {
           return callback(err, false)
