@@ -19,7 +19,7 @@ var gameController = {}
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-gameController.newGame = function(req, res) {
+gameController.newGame = function (req, res) {
   const { questionsMaxCount } = require('../config/config')
   req.session.questionsMaxCount = questionsMaxCount
   req.session.gameScore = 0
@@ -33,7 +33,7 @@ gameController.newGame = function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-gameController.randomWord = async function(req, res) {
+gameController.randomWord = async function (req, res) {
   // Vérification des toutes les données requises
   utilsReq.verify(req)
 
@@ -44,7 +44,7 @@ gameController.randomWord = async function(req, res) {
     (err, remainingTrial) => {
       if (err) {
         res.status(422).json({
-          error: 'La difficulté doit être easy, medium, hard ou sandbox',
+          error: 'La difficulté doit être easy, medium, hard ou sandbox'
         })
       }
 
@@ -53,7 +53,7 @@ gameController.randomWord = async function(req, res) {
         idUser: req.session.userId,
         remainingTrial: remainingTrial,
         difficulty: req.session.difficulty,
-        language: req.session.language,
+        language: req.session.language
       }
 
       AWSService.translate(
@@ -108,7 +108,7 @@ gameController.randomWord = async function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-gameController.translate = async function(req, res) {
+gameController.translate = async function (req, res) {
   AWSService.translate(
     req.query.language,
     req.query.word,
@@ -130,7 +130,7 @@ gameController.translate = async function(req, res) {
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
-gameController.pronounce = async function(req, res) {
+gameController.pronounce = async function (req, res) {
   AWSService.pronounce(req.query.language, req.query.word, (err, url) => {
     if (err) {
       res.status(500).json({ message: err })
@@ -147,7 +147,7 @@ gameController.pronounce = async function(req, res) {
  * @param res
  * @returns {Promise<void>}
  */
-gameController.verify = async function(req, res) {
+gameController.verify = async function (req, res) {
   const idUser = req.session.userId
   const wordUser = req.body.word
 
@@ -156,8 +156,8 @@ gameController.verify = async function(req, res) {
     undefined,
     {
       sort: {
-        createdAt: -1, // Sort by Date DESC
-      },
+        createdAt: -1 // Sort by Date DESC
+      }
     },
     (err, question) => {
       if (err) {
@@ -205,7 +205,7 @@ gameController.verify = async function(req, res) {
         res.status(418).json({ message: 'Nope, it was not this' })
       }
 
-      question.save(function(err) {
+      question.save(function (err) {
         if (err) {
           logger.error(err)
           res.status(500).json({ message: err })
@@ -221,7 +221,7 @@ gameController.verify = async function(req, res) {
  * @param res
  * @returns {Promise<void>}
  */
-gameController.skip = async function(req, res) {
+gameController.skip = async function (req, res) {
   const idUser = req.session.userId
 
   Question.findOne(
@@ -229,8 +229,8 @@ gameController.skip = async function(req, res) {
     undefined,
     {
       sort: {
-        createdAt: -1, // Sort by Date DESC
-      },
+        createdAt: -1 // Sort by Date DESC
+      }
     },
     (err, question) => {
       if (err) {
@@ -253,7 +253,7 @@ gameController.skip = async function(req, res) {
         res.status(200).json({ message: 'WORD SKIPPED', gameOver: false })
       }
 
-      question.save(function(err) {
+      question.save(function (err) {
         if (err) {
           logger.error(err)
           res.status(500).json({ message: err })
@@ -269,15 +269,15 @@ gameController.skip = async function(req, res) {
  * @param res
  * @returns {Promise<void>}
  */
-gameController.answer = async function(req, res) {
+gameController.answer = async function (req, res) {
   const idUser = req.session.userId
   Question.findOne(
     { idUser: idUser },
     undefined,
     {
       sort: {
-        createdAt: -1, // Sort by Date DESC
-      },
+        createdAt: -1 // Sort by Date DESC
+      }
     },
     (err, question) => {
       if (err) {
@@ -296,7 +296,7 @@ gameController.answer = async function(req, res) {
  * @param res
  * @returns {Promise<void>}
  */
-gameController.score = function(req, res) {
+gameController.score = function (req, res) {
   res.json({ score: req.session.gameScore })
 }
 

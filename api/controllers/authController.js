@@ -35,7 +35,9 @@ authController.register = async function (req, res) {
   const userData = {
     username: req.body.username,
     password: req.body.password,
-    email: req.body.email
+    email: req.body.email,
+    language: 'en',
+    difficulty: 'easy'
   }
 
   User.create(userData, (err, user) => {
@@ -191,37 +193,26 @@ authController.delete = async function (req, res, next) {
 
 /**
  * The myAccount function
- * @member myAccount
+ * @member account
  * @function
  * @param {Object} req - the request
  * @param {Object} res - the response
  */
 
 authController.account = async function (req, res, next) {
-  if (req.session.userId) {
-    const user = await User.findOne({ _id: req.session.userId })
-    if (user) {
-      req.session.userId = user._id
-      req.session.username = user.username
-      req.session.email = user.email
-      req.session.language = user.language
-      req.session.difficulty = user.difficulty
+  console.log('req.session: ', req.session)
+  if (req.session) {
+    res.status(200).json({
+      success: true,
+      user: {
+        username: req.session.username,
 
-      res.status(200).json({
-        success: true,
-        user: {
-          username: req.session.username,
-          email: req.session.email,
-          language: user.language,
-          difficulty: user.difficulty
-        }
-      })
-    } else {
-      res
-        .status(401)
-        .json({ success: false, message: "session doesn't exist !" })
-    }
-  }
+        email: req.session.email,
+        language: req.session.language,
+        difficulty: req.session.difficulty
+      }
+    })
+  } else res.status(500).json({ success: false })
 }
 
 /**
