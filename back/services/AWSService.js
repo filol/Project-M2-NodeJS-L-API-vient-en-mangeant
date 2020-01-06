@@ -1,3 +1,5 @@
+const logger = require('./logger')
+
 var AWSService = {}
 
 // Importing the AWS SDK (for translation or pronunciation)
@@ -17,7 +19,7 @@ AWSService.translate = function (language, word, next) {
 
   translate.translateText(params, function (err, data) {
     if (err) {
-      console.log(err, err.stack)
+      logger.error(err)
       next(err)
     } else {
       next(null, data.TranslatedText)
@@ -47,7 +49,7 @@ AWSService.pronounce = function (language, word, next) {
   var signer = new AWS.Polly.Presigner(speechParams, polly)
   signer.getSynthesizeSpeechUrl(speechParams, function (error, url) {
     if (error) {
-      console.log(error)
+      logger.error(error)
       next(error)
     } else {
       next(null, url)

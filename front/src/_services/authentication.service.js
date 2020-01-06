@@ -14,8 +14,7 @@ function login (username, password) {
       .then(response => {
         resolve(response)
       })
-      .catch(err => {
-        console.error('err: ', err)
+      .catch(() => {
         reject(new Error('Wrong email or password'))
       })
   })
@@ -34,9 +33,8 @@ function register (username, email, password) {
       .then(response => {
         resolve(response)
       })
-      .catch(err => {
-        console.error('err: ', err)
-        reject(new Error('Wrong email or password'))
+      .catch(() => {
+        reject(new Error('Username or email already exists !'))
       })
   })
 }
@@ -50,8 +48,7 @@ function logout () {
     .then(response => {
       return true
     })
-    .catch((err) => {
-      console.error('err: ', err)
+    .catch(() => {
       return false
     })
 }

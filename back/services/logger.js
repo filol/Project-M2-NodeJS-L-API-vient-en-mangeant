@@ -17,14 +17,14 @@ const logger = createLogger({
   defaultMeta: { service: 'L\'api vient en mangeant' },
   transports: [
     //
-    // - Write all logs error (and below) to `phacil-error.log`.
-    // - Write to all logs with level `info` and below to `phacil-combined.log`.
+    // - Write all logs error (and below) to `limba-error.log`.
+    // - Write to all logs with level `info` and below to `limba-combined.log`.
     //
     new transports.File({
-      filename: './services/logs/phacil-error.log',
+      filename: './services/logs/limba-error.log',
       level: 'error'
     }),
-    new transports.File({ filename: './services/logs/phacil-combined.log' })
+    new transports.File({ filename: './services/logs/limba-combined.log' })
   ]
 })
 

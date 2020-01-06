@@ -145,7 +145,7 @@ export default {
       // Create presigned URL of synthesized speech file
       signer.getSynthesizeSpeechUrl(speechParams, function (error, url) {
         if (error) {
-          console.log(error)
+          this.$store.dispatch('notification/error', error)
         } else {
           document.getElementById('audioSource').src = url
           document.getElementById('audioPlayback').load()
@@ -163,7 +163,7 @@ export default {
       }
       await translate.translateText(params, function (err, data) {
         if (err) {
-          console.log(err, err.stack)
+          this.$store.dispatch('notification/error', err)
         } else {
           ref.wordToGuess = data.TranslatedText
           ref.word = ''

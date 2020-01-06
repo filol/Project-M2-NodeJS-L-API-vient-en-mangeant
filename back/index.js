@@ -3,7 +3,6 @@ const http = require('http')
 
 const port = 3001 || process.env.port
 app.set('port', port)
-console.log('port: ', port)
 
 /**
  * Function handling errors, checks and handles them appropriately - registered to the server

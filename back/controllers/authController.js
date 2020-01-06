@@ -166,7 +166,6 @@ authController.delete = async function (req, res, next) {
   if (user) {
     User.findOneAndDelete({ _id: req.session.userId }, function (err) {
       if (err) {
-        console.log(err)
       } else {
         req.session.regenerate(function (err) {
           if (err) {
@@ -240,7 +239,7 @@ authController.changePassword = async function (req, res, next) {
   if (user && newPassword.length > 2 && newPassword.length < 400) {
     bcrypt.hash(newPassword, 10, function (err, hash) {
       if (err) {
-        console.log(err)
+        logger.error(err)
       } else {
         User.update(
           { _id: req.session.userId },
@@ -248,7 +247,7 @@ authController.changePassword = async function (req, res, next) {
             password: hash
           },
           function (err) {
-            console.log(err)
+            logger.error(err)
           }
         )
         res.status(200).json({
@@ -281,7 +280,7 @@ authController.changeDifficulty = async function (req, res, next) {
         difficulty: newDifficulty
       },
       function (err) {
-        console.log(err)
+        logger.error(err)
       }
     )
 
@@ -317,7 +316,7 @@ authController.changeLanguage = async function (req, res, next) {
         language: newLanguage
       },
       function (err) {
-        console.log(err)
+        logger.error(err)
       }
     )
 

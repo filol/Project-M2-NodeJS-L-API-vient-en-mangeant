@@ -38,7 +38,6 @@ gameController.randomWord = async function (req, res) {
   utilsReq.verify(req)
 
   const randomWord = gameService.getRandomWord()
-  console.log('random word : ', randomWord)
 
   gameService.getRemainingTrial(req.session.difficulty, (err, remainingTrial) => {
     if (err) {
@@ -54,7 +53,6 @@ gameController.randomWord = async function (req, res) {
     }
 
     AWSService.translate(req.session.language, randomWord, (err, wordTranslated) => {
-      console.log('wordtranslated', wordTranslated)
       if (err) { res.status(500).json({ error: err.message }) } else {
         questionData.wordToFind = wordTranslated
 
@@ -81,7 +79,6 @@ gameController.randomWord = async function (req, res) {
                 langAWS = 'en-US'
                 break
             }
-            console.log('langAWS: ', langAWS)
             AWSService.pronounce(langAWS, wordTranslated, (err, url) => {
               if (err) res.status(500).json({ error: err.message })
               else res.status(200).json({ pronunciation: url })
@@ -104,7 +101,7 @@ gameController.translate = async function (req, res) {
   AWSService.translate(req.query.language, req.query.word, (err, wordTranslated) => {
     if (err) {
       res.status(400).json({ error: 'error' })
-      console.log(err, err.stack)
+      logger.error(err)
     } else {
       res.status(200).json({ translation: wordTranslated })
     }
@@ -136,7 +133,6 @@ gameController.pronounce = async function (req, res) {
  * @returns {Promise<void>}
  */
 gameController.verify = async function (req, res) {
-  console.log('req.session.questionsMaxCount: ', req.session.questionsMaxCount)
   const idUser = req.session.userId
   const wordUser = req.body.word
 
@@ -151,7 +147,7 @@ gameController.verify = async function (req, res) {
     (err, question) => {
       if (err) {
         res.status(500).json({ message: err })
-        console.error(err)
+        logger.error(err)
       }
 
       if (question.find) {
@@ -186,11 +182,8 @@ gameController.verify = async function (req, res) {
       }
 
       question.save(function (err) {
-        if (!err) {
-          console.log('question ' + question._id + ' created at ' + question.createdAt + ' updated at ' + question.updatedAt)
-        } else {
-          console.log('Error: could not save question ' + question._id)
-          console.error(err)
+        if (err) {
+          logger.error(err)
           res.status(500).json({ message: err })
         }
       })
@@ -217,7 +210,7 @@ gameController.skip = async function (req, res) {
     (err, question) => {
       if (err) {
         res.status(500).json({ message: err })
-        console.error(err)
+        logger.error(err)
       }
 
       if (question.find) {
@@ -234,11 +227,8 @@ gameController.skip = async function (req, res) {
       }
 
       question.save(function (err) {
-        if (!err) {
-          console.log('question ' + question._id + ' created at ' + question.createdAt + ' updated at ' + question.updatedAt)
-        } else {
-          console.log('Error: could not save question ' + question._id)
-          console.error(err)
+        if (err) {
+          logger.error(err)
           res.status(500).json({ message: err })
         }
       })

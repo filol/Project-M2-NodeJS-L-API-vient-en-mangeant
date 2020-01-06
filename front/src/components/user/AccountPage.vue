@@ -141,42 +141,36 @@ export default {
         .get('/users/delete').then(response => {
           this.$store.dispatch('authentication/logout')
           if (this.$route.path !== '/') this.$router.push('/')
-        }).catch(err => {
-          console.error('err: ', err)
+        }).catch(() => {
+          this.$store.dispatch('notification/error', 'Error while deleting account')
         })
     },
     changePassword () {
       axiosAPI
         .post('/users/changePassword', { password: this.newPassword }).then(response => {
           this.successSnackbar = true
-          console.log(response)
-        }).catch(err => {
-          console.error('err: ', err)
+        }).catch(() => {
+          this.$store.dispatch('notification/error', 'Error while changing the password')
         })
     },
     changeDifficulty (choice) {
       axiosAPI
         .post('/users/changeDifficulty', { difficulty: this.selectedDifficulty })
         .then(response => {
-          console.log(response)
           this.successSnackbar = true
         })
         .catch(err => {
-          console.error('err: ', err)
-          console.log('error while getting account informations')
+          this.$store.dispatch('notification/error', err)
         })
     },
     changeLanguage (choice) {
-      console.log(choice)
       axiosAPI
         .post('/users/changeLanguage', { language: this.selectedLanguage })
         .then(response => {
-          console.log(response)
           this.successSnackbar = true
         })
         .catch(err => {
-          console.error('err: ', err)
-          console.log('error while getting account informations')
+          this.$store.dispatch('notification/error', err)
         })
     }
 
@@ -191,8 +185,7 @@ export default {
         this.selectedLanguage = response.data.user.language
       })
       .catch(err => {
-        console.error('err: ', err)
-        console.log('error while getting account informations')
+        this.$store.dispatch('notification/error', err)
       })
   }
 }

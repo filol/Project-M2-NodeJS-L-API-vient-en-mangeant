@@ -1,4 +1,5 @@
 const Question = require('../models/Question')
+const logger = require('../services/logger')
 
 var userController = {}
 
@@ -15,9 +16,9 @@ userController.history = async function (req, res) {
     (err, questions) => {
       if (err) {
         res.status(500).json({ message: err })
-        console.error(err)
+        logger.error(err)
       }
-      let response = []
+      const response = []
       questions.forEach(function (question) {
         response.push({
           id: question._id,

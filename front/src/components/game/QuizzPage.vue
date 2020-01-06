@@ -113,8 +113,7 @@ export default {
         }
       })
       .catch(err => {
-        console.error('err: ', err)
-        console.log('error while getting account informations')
+        this.$store.dispatch('notification/error', err)
       })
   },
   methods: {
